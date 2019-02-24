@@ -38,7 +38,7 @@
 #include <list>
 #include <algorithm>
 #include <functional>
-
+#include "TAppEncHelper360/TExt360AppEncCfg.h"
 #include "TEncTop.h"
 #include "TEncGOP.h"
 #include "TEncAnalyze.h"
@@ -2260,12 +2260,11 @@ Void TEncGOP::xCalculateAddPSNR( TComPic* pcPic, TComPicYuv* pcPicD, const Acces
 
 	iSize = 0;
 	//char * features = "features.txt";
-	std::string  fullName = inputVideoName;
-	fullName = fullName.substr(0, fullName.find("."));
-	fullName += ".txt";
-	const char* features = fullName.c_str();
+	//std::string  fullName = inputVideoName;
+	//fullName = fullName.substr(0, fullName.find("."));
+	//fullName += ".txt";
 
-	FILE* file = fopen(features, "r");
+	FILE* file = fopen(TExt360AppEncCfg::m_featureFileName.c_str(), "r");
 	int x, y;
 	x = y = 0;
 

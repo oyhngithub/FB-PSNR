@@ -403,6 +403,7 @@ Void TExt360AppEncCfg::addOptions(df::program_options_lite::Options &opts, TExt3
 #endif
 
   opts.addOptions()
+  ("FeatureFile",								 m_featureFileName,					  std::string(""),								"Spherical points data file name for FB - PSNR calculation")
   ("SphereVideo,-360vid",                        m_bSVideo,                           false,                                "Enable 360 video projection conversion")
   ("InputGeometryType",                          m_sourceSVideoInfo.geoType,          0,                                    "The geometry of input 360 video")
   ("SourceFPStructure",                          m_sourceSVideoInfo.framePackStruct,  m_sourceSVideoInfo.framePackStruct,   "Source framepacking structure")
@@ -1796,6 +1797,7 @@ Void TExt360AppEncCfg::outputConfigurationSummary()
   printf("\n\n-----360Lib software version [%s]-----\n", VERSION_360Lib);
   printf("-----360 video parameters----\n");
   printf("SphereVideo:%d\n", m_bSVideo);
+  printf("FeatureFileName:%s\n", m_featureFileName.c_str());//Added by MaGuilong
   if(m_bSVideo)
   {
     printf("InputGeometryType: ");
@@ -1983,3 +1985,4 @@ Void TExt360AppEncCfg::setMaxCUInfo(UInt   uiCTUSize, UInt minCuSize)
   }
   m_cfg.m_uiMaxCUDepth = uiMaxCUDepth;
 }
+std::string TExt360AppEncCfg::m_featureFileName = "";

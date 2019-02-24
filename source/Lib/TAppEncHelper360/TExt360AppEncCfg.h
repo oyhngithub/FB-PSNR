@@ -105,6 +105,7 @@ protected:
 
 public:
   // The following functions are used by HM-core (potentially this could be placed in an interface class)
+  static std::string m_featureFileName;//Added by MaGuilong
   TExt360AppEncCfg(TAppEncCfg &cfg);
   virtual ~TExt360AppEncCfg();
 
