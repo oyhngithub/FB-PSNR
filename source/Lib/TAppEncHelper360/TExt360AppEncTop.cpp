@@ -112,6 +112,7 @@ Void TExt360AppEncTop::xCreate(TEncGOP &encGop, TComPicYuv &yuvOrig)
       Int iAdjustWidth = cfg.m_inputFileWidth;
       Int iAdjustHeight = cfg.m_inputFileHeight;
       if(   extCfg.m_sourceSVideoInfo.geoType == SVIDEO_EQUIRECT 
+		 || extCfg.m_sourceSVideoInfo.geoType == SVIDEO_NEWUNIFORMMAP
 #if SVIDEO_ADJUSTED_EQUALAREA      
          || extCfg.m_sourceSVideoInfo.geoType == SVIDEO_ADJUSTEDEQUALAREA
 #else

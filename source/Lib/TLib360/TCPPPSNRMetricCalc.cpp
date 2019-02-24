@@ -122,6 +122,7 @@ Void TCPPPSNRMetric::setCPPVideoInfo(SVideoInfo iCppCodingVdideoInfo, SVideoInfo
 Void TCPPPSNRMetric::setDefaultFramePackingParam(SVideoInfo& sVideoInfo)
 {
   if(  sVideoInfo.geoType == SVIDEO_EQUIRECT 
+	|| sVideoInfo.geoType == SVIDEO_NEWUNIFORMMAP//Added by MaGuilong
 #if SVIDEO_ADJUSTED_EQUALAREA
     || sVideoInfo.geoType == SVIDEO_ADJUSTEDEQUALAREA
 #else
@@ -272,6 +273,7 @@ Void TCPPPSNRMetric::setDefaultFramePackingParam(SVideoInfo& sVideoInfo)
 Void TCPPPSNRMetric::fillSourceSVideoInfo(SVideoInfo& sVidInfo, Int inputWidth, Int inputHeight)
 {
   if(  sVidInfo.geoType == SVIDEO_EQUIRECT 
+	|| sVidInfo.geoType == SVIDEO_NEWUNIFORMMAP// Added by MaGuilong
 #if SVIDEO_ADJUSTED_EQUALAREA
     || sVidInfo.geoType == SVIDEO_ADJUSTEDEQUALAREA
 #else

@@ -253,6 +253,7 @@ static inline std::istringstream &operator >> (std::istringstream &in, SubSphere
 Void TApp360ConvertCfg::setDefaultFramePackingParam(SVideoInfo& sVideoInfo)
 {
   if(   sVideoInfo.geoType == SVIDEO_EQUIRECT 
+	 || sVideoInfo.geoType == SVIDEO_NEWUNIFORMMAP
 #if SVIDEO_ADJUSTED_EQUALAREA
      || sVideoInfo.geoType == SVIDEO_ADJUSTEDEQUALAREA 
 #else
@@ -269,24 +270,6 @@ Void TApp360ConvertCfg::setDefaultFramePackingParam(SVideoInfo& sVideoInfo)
       frmPack.rows = 1;
       frmPack.cols = 1;
       frmPack.faces[0][0].id = 0; frmPack.faces[0][0].rot = 0;
-  }
-  else if (sVideoInfo.geoType == SVIDEO_NEWUNIFORMMAP
-#if SVIDEO_ADJUSTED_EQUALAREA
-	  || sVideoInfo.geoType == SVIDEO_ADJUSTEDEQUALAREA
-#else
-	  || sVideoInfo.geoType == SVIDEO_EQUALAREA
-#endif
-	  || sVideoInfo.geoType == SVIDEO_VIEWPORT
-#if SVIDEO_CPPPSNR
-	  || sVideoInfo.geoType == SVIDEO_CRASTERSPARABOLIC
-#endif
-	  )
-  {
-	  SVideoFPStruct &frmPack = sVideoInfo.framePackStruct;
-	  frmPack.chromaFormatIDC = CHROMA_420;
-	  frmPack.rows = 1;
-	  frmPack.cols = 1;
-	  frmPack.faces[0][0].id = 0; frmPack.faces[0][0].rot = 0;
   }
   else if(  (sVideoInfo.geoType == SVIDEO_CUBEMAP)
 #if SVIDEO_ADJUSTED_CUBEMAP
@@ -862,6 +845,7 @@ Bool TApp360ConvertCfg::parseCfg( Int argc, TChar* argv[] )
 Void TApp360ConvertCfg::fillSourceSVideoInfo(SVideoInfo& sVidInfo, Int inputWidth, Int inputHeight)
 {
   if(   sVidInfo.geoType == SVIDEO_EQUIRECT 
+	|| sVidInfo.geoType == SVIDEO_NEWUNIFORMMAP
 #if SVIDEO_ADJUSTED_EQUALAREA
     || sVidInfo.geoType == SVIDEO_ADJUSTEDEQUALAREA 
 #else
@@ -901,47 +885,6 @@ Void TApp360ConvertCfg::fillSourceSVideoInfo(SVideoInfo& sVidInfo, Int inputWidt
     }
     //sVidInfo.framePackStruct.faces[0][0].width = sVidInfo.iFaceWidth;
     //sVidInfo.framePackStruct.faces[0][0].height = sVidInfo.iFaceHeight;
-  }
-  else if (sVidInfo.geoType == SVIDEO_NEWUNIFORMMAP
-#if SVIDEO_ADJUSTED_EQUALAREA
-	  || sVidInfo.geoType == SVIDEO_ADJUSTEDEQUALAREA
-#else
-	  || sVidInfo.geoType == SVIDEO_EQUALAREA
-#endif
-	  || sVidInfo.geoType == SVIDEO_VIEWPORT
-#if SVIDEO_CPPPSNR
-	  || sVidInfo.geoType == SVIDEO_CRASTERSPARABOLIC
-#endif
-	  )
-  {
-	  //assert(sVidInfo.framePackStruct.rows == 1);
-	  //assert(sVidInfo.framePackStruct.cols == 1);
-	  //enforce;
-	  sVidInfo.framePackStruct.rows = 1;
-	  sVidInfo.framePackStruct.cols = 1;
-	  sVidInfo.framePackStruct.faces[0][0].id = 0;
-	  //sVidInfo.framePackStruct.faces[0][0].rot = 0;
-	  sVidInfo.iNumFaces = 1;
-	  if (sVidInfo.framePackStruct.faces[0][0].rot == 90 || sVidInfo.framePackStruct.faces[0][0].rot == 270)
-	  {
-#if SVIDEO_ERP_PADDING
-		  if (sVidInfo.bPERP)
-			  inputHeight -= (SVIDEO_ERP_PAD_L + SVIDEO_ERP_PAD_R);
-#endif
-		  sVidInfo.iFaceWidth = inputHeight;
-		  sVidInfo.iFaceHeight = inputWidth;
-	  }
-	  else
-	  {
-#if SVIDEO_ERP_PADDING
-		  if (sVidInfo.bPERP)
-			  inputWidth -= (SVIDEO_ERP_PAD_L + SVIDEO_ERP_PAD_R);
-#endif
-		  sVidInfo.iFaceWidth = inputWidth;
-		  sVidInfo.iFaceHeight = inputHeight;
-	  }
-	  //sVidInfo.framePackStruct.faces[0][0].width = sVidInfo.iFaceWidth;
-	  //sVidInfo.framePackStruct.faces[0][0].height = sVidInfo.iFaceHeight;
   }
   else if(  (sVidInfo.geoType == SVIDEO_CUBEMAP)
 #if SVIDEO_ADJUSTED_CUBEMAP
@@ -1053,7 +996,7 @@ Void TApp360ConvertCfg::calcOutputResolution(SVideoInfo& sourceSVideoInfo, SVide
 {
   //calulate the coding resolution;
   if(   sourceSVideoInfo.geoType == SVIDEO_EQUIRECT 
-	  || sourceSVideoInfo.geoType == SVIDEO_NEWUNIFORMMAP
+	 || sourceSVideoInfo.geoType == SVIDEO_NEWUNIFORMMAP
 #if SVIDEO_ADJUSTED_EQUALAREA
      || sourceSVideoInfo.geoType == SVIDEO_ADJUSTEDEQUALAREA 
 #else
@@ -1270,6 +1213,7 @@ Void TApp360ConvertCfg::calcOutputResolution(SVideoInfo& sourceSVideoInfo, SVide
       }
     }
     else if(   codingSVideoInfo.geoType ==SVIDEO_EQUIRECT 
+			|| codingSVideoInfo.geoType == SVIDEO_NEWUNIFORMMAP
 #if SVIDEO_ADJUSTED_EQUALAREA
             || codingSVideoInfo.geoType == SVIDEO_ADJUSTEDEQUALAREA 
 #else
@@ -1320,57 +1264,6 @@ Void TApp360ConvertCfg::calcOutputResolution(SVideoInfo& sourceSVideoInfo, SVide
 #endif
       }
     }
-	else if (codingSVideoInfo.geoType == SVIDEO_NEWUNIFORMMAP
-#if SVIDEO_ADJUSTED_EQUALAREA
-		|| codingSVideoInfo.geoType == SVIDEO_ADJUSTEDEQUALAREA
-#else
-		|| codingSVideoInfo.geoType == SVIDEO_EQUALAREA
-#endif
-#if SVIDEO_CPPPSNR
-		|| codingSVideoInfo.geoType == SVIDEO_CRASTERSPARABOLIC
-#endif
-		)
-	{
-		codingSVideoInfo.iNumFaces = 1;
-		if (m_iCodingFaceWidth == 0 || m_iCodingFaceHeight == 0)
-		{
-			codingSVideoInfo.iFaceWidth = (sourceSVideoInfo.iFaceWidth + (minCuSize - 1)) / minCuSize*minCuSize;
-			codingSVideoInfo.iFaceHeight = (sourceSVideoInfo.iFaceHeight + (minCuSize - 1)) / minCuSize*minCuSize;
-		}
-		else
-		{
-			codingSVideoInfo.iFaceWidth = (m_iCodingFaceWidth + (minCuSize - 1)) / minCuSize*minCuSize;
-			codingSVideoInfo.iFaceHeight = (m_iCodingFaceHeight + (minCuSize - 1)) / minCuSize*minCuSize;
-		}
-
-		Int degree = codingSVideoInfo.framePackStruct.faces[0][0].rot;
-		if (degree == 90 || degree == 270)
-		{
-			iOutputWidth = codingSVideoInfo.iFaceHeight;
-			iOutputHeight = codingSVideoInfo.iFaceWidth;
-#if SVIDEO_ERP_PADDING
-#if 1 //bugfix;
-			if (codingSVideoInfo.bPERP)
-#else
-			if (!sourceSVideoInfo.bPERP && codingSVideoInfo.bPERP)
-#endif
-				iOutputHeight += SVIDEO_ERP_PAD_L + SVIDEO_ERP_PAD_R;
-#endif
-		}
-		else
-		{
-			iOutputWidth = codingSVideoInfo.iFaceWidth;
-			iOutputHeight = codingSVideoInfo.iFaceHeight;
-#if SVIDEO_ERP_PADDING
-#if 1 //bugfix;
-			if (codingSVideoInfo.bPERP)
-#else
-			if (!sourceSVideoInfo.bPERP && codingSVideoInfo.bPERP)
-#endif
-				iOutputWidth += SVIDEO_ERP_PAD_L + SVIDEO_ERP_PAD_R;
-#endif
-		}
-	}
     else
       assert(!"Not supported yet");
   }
@@ -1395,7 +1288,7 @@ Void TApp360ConvertCfg::calcOutputResolution(SVideoInfo& sourceSVideoInfo, SVide
            )
   { 
     if(   codingSVideoInfo.geoType == SVIDEO_EQUIRECT 
-		|| codingSVideoInfo.geoType == SVIDEO_NEWUNIFORMMAP
+	   || codingSVideoInfo.geoType == SVIDEO_NEWUNIFORMMAP
 #if SVIDEO_ADJUSTED_EQUALAREA
        || codingSVideoInfo.geoType == SVIDEO_ADJUSTEDEQUALAREA 
 #else
@@ -1804,6 +1697,7 @@ Void TApp360ConvertCfg::calcOutputResolution(SVideoInfo& sourceSVideoInfo, SVide
       }
     }
     else if (   codingSVideoInfo.geoType == SVIDEO_EQUIRECT
+			 || codingSVideoInfo.geoType == SVIDEO_NEWUNIFORMMAP
 #if SVIDEO_ADJUSTED_EQUALAREA
              || codingSVideoInfo.geoType == SVIDEO_ADJUSTEDEQUALAREA
 #else
@@ -1835,38 +1729,6 @@ Void TApp360ConvertCfg::calcOutputResolution(SVideoInfo& sourceSVideoInfo, SVide
         iOutputHeight = codingSVideoInfo.iFaceHeight;
       }
     }
-	else if (codingSVideoInfo.geoType == SVIDEO_NEWUNIFORMMAP
-#if SVIDEO_ADJUSTED_EQUALAREA
-		|| codingSVideoInfo.geoType == SVIDEO_ADJUSTEDEQUALAREA
-#else
-		|| codingSVideoInfo.geoType == SVIDEO_EQUALAREA
-#endif  
-		)
-	{
-		codingSVideoInfo.iNumFaces = 1;
-		if (m_iCodingFaceWidth == 0 || m_iCodingFaceHeight == 0)
-		{
-			codingSVideoInfo.iFaceWidth = (width + (minCuSize - 1)) / minCuSize*minCuSize;
-			codingSVideoInfo.iFaceHeight = (height + (minCuSize - 1)) / minCuSize*minCuSize;
-		}
-		else
-		{
-			codingSVideoInfo.iFaceWidth = (m_iCodingFaceWidth + (minCuSize - 1)) / minCuSize*minCuSize;
-			codingSVideoInfo.iFaceHeight = (m_iCodingFaceHeight + (minCuSize - 1)) / minCuSize*minCuSize;
-		}
-
-		Int degree = codingSVideoInfo.framePackStruct.faces[0][0].rot;
-		if (degree == 90 || degree == 270)
-		{
-			iOutputWidth = codingSVideoInfo.iFaceHeight;
-			iOutputHeight = codingSVideoInfo.iFaceWidth;
-		}
-		else
-		{
-			iOutputWidth = codingSVideoInfo.iFaceWidth;
-			iOutputHeight = codingSVideoInfo.iFaceHeight;
-		}
-	}
   }
 #endif
   else
@@ -2062,7 +1924,7 @@ Void TApp360ConvertCfg::xCheckParameter()
 #if SVIDEO_SUB_SPHERE
   if(m_codingSVideoInfo.subSphere.bPresent)
   {
-    if((m_codingSVideoInfo.geoType != SVIDEO_EQUIRECT) || (m_codingSVideoInfo.geoType != SVIDEO_NEWUNIFORMMAP))
+    if(m_codingSVideoInfo.geoType != SVIDEO_EQUIRECT)
     {
       printf("SubSphereSettings is not supported for the geometry type: %d, disable it!\n", m_codingSVideoInfo.geoType);
       memset(&(m_codingSVideoInfo.subSphere), 0, sizeof(SubSphereSettings));
@@ -2255,7 +2117,7 @@ Void TApp360ConvertCfg::xPrintParameter()
     printf(" | ");
   }
 #if SVIDEO_ERP_PADDING
-  if(m_sourceSVideoInfo.geoType == SVIDEO_EQUIRECT || m_sourceSVideoInfo.geoType == SVIDEO_NEWUNIFORMMAP)
+  if(m_sourceSVideoInfo.geoType == SVIDEO_EQUIRECT)
     printf("\nInputPERP: %d", m_sourceSVideoInfo.bPERP);
 #endif
   printf("\n\nCodingGeometryType: ");
@@ -2269,7 +2131,7 @@ Void TApp360ConvertCfg::xPrintParameter()
     printf(" | ");
   }
 #if SVIDEO_ERP_PADDING
-  if(m_codingSVideoInfo.geoType == SVIDEO_EQUIRECT || m_codingSVideoInfo.geoType == SVIDEO_NEWUNIFORMMAP)
+  if(m_codingSVideoInfo.geoType == SVIDEO_EQUIRECT)
     printf("\nCodingPERP: %d\n", m_codingSVideoInfo.bPERP);
 #endif
 #if SVIDEO_SUB_SPHERE

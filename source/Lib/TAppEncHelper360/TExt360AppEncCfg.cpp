@@ -146,6 +146,7 @@ static inline std::istringstream &operator>>(std::istringstream &in, ViewPortSet
 Void TExt360AppEncCfg::xSetDefaultFramePackingParam(SVideoInfo& sVideoInfo)
 {
   if(  sVideoInfo.geoType == SVIDEO_EQUIRECT 
+	|| sVideoInfo.geoType == SVIDEO_NEWUNIFORMMAP
 #if SVIDEO_ADJUSTED_EQUALAREA
     || sVideoInfo.geoType == SVIDEO_ADJUSTEDEQUALAREA 
 #else
@@ -165,17 +166,6 @@ Void TExt360AppEncCfg::xSetDefaultFramePackingParam(SVideoInfo& sVideoInfo)
       frmPack.cols = 1;
       frmPack.faces[0][0].id = 0; frmPack.faces[0][0].rot = 0;
     }
-  }
-  else if ((sVideoInfo.geoType == SVIDEO_NEWUNIFORMMAP))
-  {
-	  if (sVideoInfo.framePackStruct.rows == 0 || sVideoInfo.framePackStruct.cols == 0)
-	  {
-		  SVideoFPStruct &frmPack = sVideoInfo.framePackStruct;
-		  frmPack.chromaFormatIDC = CHROMA_420;
-		  frmPack.rows = 1;
-		  frmPack.cols = 1;
-		  frmPack.faces[0][0].id = 0; frmPack.faces[0][0].rot = 0;
-	  }
   }
   else if( (sVideoInfo.geoType == SVIDEO_CUBEMAP) 
 #if SVIDEO_ADJUSTED_CUBEMAP
@@ -564,6 +554,7 @@ Void TExt360AppEncCfg::processOptions(TExt360AppEncCfg::TExt360AppEncCfgContext 
 Void TExt360AppEncCfg::xFillSourceSVideoInfo(SVideoInfo& sVidInfo, Int inputWidth, Int inputHeight)
 {
   if(  sVidInfo.geoType == SVIDEO_EQUIRECT 
+	|| sVidInfo.geoType == SVIDEO_NEWUNIFORMMAP
 #if SVIDEO_ADJUSTED_EQUALAREA
     || sVidInfo.geoType == SVIDEO_ADJUSTEDEQUALAREA 
 #else
@@ -597,31 +588,6 @@ Void TExt360AppEncCfg::xFillSourceSVideoInfo(SVideoInfo& sVidInfo, Int inputWidt
       sVidInfo.iFaceWidth = inputWidth;
       sVidInfo.iFaceHeight = inputHeight;
     }
-  }
-  else if ((sVidInfo.geoType == SVIDEO_NEWUNIFORMMAP))
-  {
-	  //assert(sVidInfo.framePackStruct.rows == 1);
-	  //assert(sVidInfo.framePackStruct.cols == 1);
-	  //enforce;
-	  sVidInfo.framePackStruct.rows = 1;
-	  sVidInfo.framePackStruct.cols = 1;
-	  sVidInfo.framePackStruct.faces[0][0].id = 0;
-	  //sVidInfo.framePackStruct.faces[0][0].rot = 0;
-	  sVidInfo.iNumFaces = 1;
-	  if (sVidInfo.framePackStruct.faces[0][0].rot == 90 || sVidInfo.framePackStruct.faces[0][0].rot == 270)
-	  {
-		  sVidInfo.iFaceWidth = inputHeight;
-		  sVidInfo.iFaceHeight = inputWidth;
-	  }
-	  else
-	  {
-#if SVIDEO_ERP_PADDING
-		  if (sVidInfo.bPERP)
-			  inputWidth -= (SVIDEO_ERP_PAD_L + SVIDEO_ERP_PAD_R);
-#endif
-		  sVidInfo.iFaceWidth = inputWidth;
-		  sVidInfo.iFaceHeight = inputHeight;
-	  }
   }
   else if (  (sVidInfo.geoType == SVIDEO_CUBEMAP)
 #if SVIDEO_ADJUSTED_CUBEMAP
@@ -679,7 +645,8 @@ Void TExt360AppEncCfg::xFillSourceSVideoInfo(SVideoInfo& sVidInfo, Int inputWidt
 #if SVIDEO_SEC_VID_ISP3
       //if (sVidInfo.iCompactFPStructure == 1)
       {
-        sVidInfo.iFaceWidth = (2 * inputWidth - 16 * halfCol - 8 - 2 * S_CISP_PAD_HOR) / (2 * halfCol + 1);
+        //sVidInfo.iFaceWidth = (2 * inputWidth - 16 * halfCol - 8 - 2 * S_CISP_PAD_HOR) / (2 * halfCol + 1);
+		sVidInfo.iFaceWidth = (2 * inputWidth - 16 * halfCol - 8 - 4 * S_CISP_PAD_HOR) / (2 * halfCol + 1);
         sVidInfo.iFaceHeight = (inputHeight - S_CISP_PAD_VER) / sVidInfo.framePackStruct.rows;
       }
 #else
@@ -1259,8 +1226,10 @@ Void TExt360AppEncCfg::xCalcOutputResolution(SVideoInfo& sourceSVideoInfo, SVide
         else if(codingSVideoInfo.geoType == SVIDEO_ICOSAHEDRON)
         {
           Int halfCol = (codingSVideoInfo.framePackStruct.cols>>1);
-          iOutputWidth  = halfCol*(codingSVideoInfo.iFaceWidth + 4) + (codingSVideoInfo.iFaceWidth>>1) + 2;
-          iOutputHeight = codingSVideoInfo.framePackStruct.rows*codingSVideoInfo.iFaceHeight;
+         //iOutputWidth  = halfCol*(codingSVideoInfo.iFaceWidth + 4) + (codingSVideoInfo.iFaceWidth>>1) + 2;
+		  iOutputWidth = (codingSVideoInfo.iFaceWidth * (2 * halfCol + 1) + 16 * halfCol + 8 + 4 * S_CISP_PAD_HOR) >> 1;
+          //iOutputHeight = codingSVideoInfo.framePackStruct.rows*codingSVideoInfo.iFaceHeight;
+		  iOutputHeight = codingSVideoInfo.iFaceHeight * codingSVideoInfo.framePackStruct.rows + S_CISP_PAD_VER;
         }
       } 
     }
@@ -1512,6 +1481,9 @@ Void TExt360AppEncCfg::xPrintGeoTypeName(Int nType, Bool bCompactFPFormat)
   case SVIDEO_EQUIRECT:
     printf("Equirectangular ");
     break;
+	case SVIDEO_NEWUNIFORMMAP:
+	  printf("NEWUNIFORMMAP ");
+	  break;
   case SVIDEO_CUBEMAP:
     printf("Cubemap ");
     break;

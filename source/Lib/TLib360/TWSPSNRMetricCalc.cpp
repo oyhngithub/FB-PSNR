@@ -2143,7 +2143,7 @@ Void TWSPSNRMetric::xCalculateWSPSNR( TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPic
     for(Int y = 0; y < iHeight; y++ )
     {
         
-      if (m_codingGeoType==SVIDEO_EQUIRECT)
+      if (m_codingGeoType==SVIDEO_EQUIRECT || m_codingGeoType==SVIDEO_NEWUNIFORMMAP)
       {      
         if(!chan)
         {
