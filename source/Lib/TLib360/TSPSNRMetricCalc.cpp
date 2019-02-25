@@ -37,6 +37,7 @@
 
 #include "TSPSNRMetricCalc.h"
 #include "TLibEncoder/TEncRateCtrl.cpp"
+#include "TAppEncHelper360/TExt360AppEncCfg.h"
 
 // ====================================================================================================================
 // DIY
@@ -249,12 +250,12 @@ Void TSPSNRMetric::xCalculateSPSNR( TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPicD 
 	//Added by Ma Guilong
 	
 	iNumPoints = 0;
-	std::string  fullName = inputVideoName;
-	fullName = fullName.substr(0, fullName.find("."));
-	fullName += ".txt";
-	const char* features = fullName.c_str();
+	//std::string  fullName = inputVideoName;
+	//fullName = fullName.substr(0, fullName.find("."));
+	//fullName += ".txt";
+	//const char* features = fullName.c_str();
 	//char * features = "features.txt"; //OLD VERSION
-	FILE* file = fopen(features, "r");
+	FILE* file = fopen(TExt360AppEncCfg::m_featureFileName.c_str(), "r");
 	int x, y;
 	x = y = 0;
 
