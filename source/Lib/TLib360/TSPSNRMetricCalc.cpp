@@ -267,6 +267,10 @@ Void TSPSNRMetric::xCalculateSPSNR( TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPicD 
 		++iNumPoints;
 		//Intermediate_Int iDiff = (Intermediate_Int)(((pOrg + (y % iOrgStride))[x]) << iReferenceBitShift[toChannelType(ch)] - ((pRec + (y % iRecStride))[x]) << iReferenceBitShift[toChannelType(ch)]);
 		Intermediate_Int iDiff = (Intermediate_Int)((pOrg[(y * iOrgStride) + x] << iReferenceBitShift[toChannelType(ch)]) - ((pRec[y * iRecStride + x]) << iReferenceBitShift[toChannelType(ch)]));
+		if (abs(iDiff) > 255) {
+			printf("Org:%d, Rec:%d\nx:%d, y:%d", (Intermediate_Int)((pOrg[(y * iOrgStride) + x] << iReferenceBitShift[toChannelType(ch)]),
+				((pRec[y * iRecStride + x]) << iReferenceBitShift[toChannelType(ch)]), x, y));
+		}
 		SSDspsnr[chan] += iDiff * iDiff;
 	}
 	

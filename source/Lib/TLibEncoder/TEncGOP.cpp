@@ -2274,8 +2274,14 @@ Void TEncGOP::xCalculateAddPSNR( TComPic* pcPic, TComPicYuv* pcPicD, const Acces
 			y >>= 1;
 		}
 		++iSize;
-		//Intermediate_Int iDiff = (Intermediate_Int)((pOrg + (y % iWidth))[x] - (pRec + (y % iWidth))[x]);
-		Intermediate_Int iDiff = (Intermediate_Int)((pOrg + (y * iWidth))[x] - (pRec + (y * iWidth))[x]);
+		//Intermediate_Int iDiff = (Intermediate_Int)((pOrg + (y % iWidth))[x] - (pRec + (y % iWidth))[x]);o
+		Intermediate_Int iDiff = (Intermediate_Int)((pOrg + (y * iOrgStride))[x] - (pRec + (y * iRecStride))[x]);
+		if (abs(iDiff) > 255) {
+			printf("Org:%d, Rec:%d\nx:%d, y:%d", (pOrg + (y * iOrgStride))[x], (pRec + (y * iRecStride))[x], x, y);
+		}
+		//if (iWidth < x || iHeight < y) {
+		//	printf("x:%d, y:%d", x, y);
+		//}
 		uiSSDtemp += iDiff * iDiff;
 	}
 	
