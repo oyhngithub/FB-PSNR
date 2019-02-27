@@ -163,6 +163,9 @@
     <ProjectReference Include="TAppCommon_vc2015.vcxproj">
       <Project>{d1e8a1c2-15db-4c94-80e8-4f70cf0a2dc5}</Project>
     </ProjectReference>
+    <ProjectReference Include="TAppEncoder_vc2015.vcxproj">
+      <Project>{d759e4e1-d33a-4483-b57b-0fd248e022fe}</Project>
+    </ProjectReference>
     <ProjectReference Include="TLib360_vc2015.vcxproj">
       <Project>{2ce9157f-dcdf-47c8-b226-0abcea824efc}</Project>
     </ProjectReference>

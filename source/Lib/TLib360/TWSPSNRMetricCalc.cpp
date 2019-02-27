@@ -36,6 +36,7 @@
 */
 
 #include "TWSPSNRMetricCalc.h"
+#include "TAppEncHelper360/TExt360AppEncCfg.h"
 
 #if SVIDEO_WSPSNR
 
@@ -2122,7 +2123,198 @@ Void TWSPSNRMetric::xCalculateWSPSNR( TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPic
   TComPicYuv &picd=*pcPicD;
   //Double SSDspsnr[3]={0, 0 ,0};
   //ChromaFormat chromaFormat = pcPicD->getChromaFormat();
+  for (Int chan = 0; chan < pcPicD->getNumberValidComponents(); chan++)
+  {
+	  const ComponentID ch = ComponentID(chan);
+	  const Pel*  pOrg = pcOrgPicYuv->getAddr(ch);
+	  const Int   iOrgStride = pcOrgPicYuv->getStride(ch);
+	  const Pel*  pRec = picd.getAddr(ch);
+	  const Int   iRecStride = picd.getStride(ch);
+	  const Int   iWidth = pcPicD->getWidth(ch);
+	  const Int   iHeight = pcPicD->getHeight(ch);
+	  Double fWeight = 1;
+	  Double fWeightSum = 0;
+	  //Int   iSize   = iWidth*iHeight;
 
+	  Double SSDwpsnr = 0;
+
+
+	  //Added by Ma Guilong
+
+	  FILE* file = fopen(TExt360AppEncCfg::m_featureFileName.c_str(), "r");
+	  int x, y;
+	  x = y = 0;
+
+	  while (fscanf(file, "%d %d", &x, &y) == 2) {
+		  if (ch) {
+			  x >>= 1;
+			  y >>= 1;
+		  }
+		  if (m_codingGeoType == SVIDEO_EQUIRECT || m_codingGeoType == SVIDEO_NEWUNIFORMMAP)
+		  {
+			  if (!chan)
+			  {
+				  fWeight = m_fErpWeight_Y[y];
+			  }
+			  else
+			  {
+				  fWeight = m_fErpWeight_C[y];
+			  }
+		  }
+		  if (((pOrg + y * iOrgStride)[x]) > 255 || ((pOrg + y * iOrgStride)[x]) < 0 || ((pRec + y * iRecStride)[x]) > 255 || ((pRec + y * iRecStride)[x]) < 0) 
+			  printf("x:%d ,y:%d\norg:%d, rec:%d\n", x, y, (pOrg + y * iOrgStride)[x], (pRec + y * iRecStride)[x]);
+		  int test = iReferenceBitShift[toChannelType(ch)];
+		  int org = ((pOrg + y * iOrgStride)[x]);
+		  int rec = ((pRec + y * iRecStride)[x]);
+		  int refShift = iReferenceBitShift[toChannelType(ch)];
+		  int outputShift = iOutputBitShift[toChannelType(ch)];
+		  Intermediate_Int iDiff = (Intermediate_Int)((((pOrg + y * iOrgStride)[x]) << iReferenceBitShift[toChannelType(ch)]) - (((pRec + y * iRecStride)[x]) << iOutputBitShift[toChannelType(ch)]));
+		  //Intermediate_Int iDiff = (Intermediate_Int)((pOrg[x] << iReferenceBitShift[toChannelType(ch)]) - (pRec[x] << iOutputBitShift[toChannelType(ch)]));
+
+		  if ((m_codingGeoType == SVIDEO_CUBEMAP)
+#if SVIDEO_ADJUSTED_CUBEMAP
+			  || (m_codingGeoType == SVIDEO_ADJUSTEDCUBEMAP)
+#endif
+#if SVIDEO_EQUATORIAL_CYLINDRICAL
+			  || (m_codingGeoType == SVIDEO_EQUATORIALCYLINDRICAL)
+#endif
+#if SVIDEO_EQUIANGULAR_CUBEMAP
+			  || (m_codingGeoType == SVIDEO_EQUIANGULARCUBEMAP)
+#endif
+			  )
+		  {
+			  if (!chan)
+			  {
+				  if (iWidth / 4 == iHeight / 3 && x >= iWidth / 4 && (y < iHeight / 3 || y >= 2 * iHeight / 3))
+				  {
+					  fWeight = 0;
+				  }
+				  else
+				  {
+					  fWeight = m_fCubeWeight_Y[(m_iCodingFaceWidth)*(y % (m_iCodingFaceHeight)) + (x % (m_iCodingFaceWidth))];
+				  }
+
+			  }
+			  else
+			  {
+				  if (iWidth / 4 == iHeight / 3 && x >= iWidth / 4 && (y < iHeight / 3 || y >= 2 * iHeight / 3))
+				  {
+					  fWeight = 0;
+				  }
+				  else
+				  {
+					  fWeight = m_fCubeWeight_C[(m_iCodingFaceWidth >> (pcPicD->getComponentScaleX(COMPONENT_Cb)))*(y % (m_iCodingFaceHeight >> (pcPicD->getComponentScaleY(COMPONENT_Cb)))) + (x % (m_iCodingFaceWidth >> (pcPicD->getComponentScaleX(COMPONENT_Cb))))];
+				  }
+			  }
+		  }
+#if SVIDEO_ADJUSTED_EQUALAREA
+		  else if (m_codingGeoType == SVIDEO_ADJUSTEDEQUALAREA)
+#else
+		  else if (m_codingGeoType == SVIDEO_EQUALAREA)
+#endif
+		  {
+			  if (!chan)
+			  {
+				  fWeight = m_fEapWeight_Y[y*iWidth + x];
+			  }
+			  else
+			  {
+				  fWeight = m_fEapWeight_C[y*iWidth + x];
+			  }
+		  }
+		  else if (m_codingGeoType == SVIDEO_OCTAHEDRON)
+		  {
+			  if (!chan)
+			  {
+				  fWeight = m_fOctaWeight_Y[iWidth*y + x];
+			  }
+			  else
+			  {
+				  fWeight = m_fOctaWeight_C[y*iWidth + x];
+			  }
+		  }
+		  else if (m_codingGeoType == SVIDEO_ICOSAHEDRON)
+		  {
+			  if (!chan)
+			  {
+				  fWeight = m_fIcoWeight_Y[iWidth*y + x];
+			  }
+			  else
+			  {
+				  fWeight = m_fIcoWeight_C[y*iWidth + x];
+			  }
+		  }
+#if SVIDEO_WSPSNR_SSP
+		  else if (m_codingGeoType == SVIDEO_SEGMENTEDSPHERE)
+		  {
+			  if (!chan)
+			  {
+				  fWeight = m_fSspWeight_Y[iWidth*y + x];
+			  }
+			  else
+			  {
+				  fWeight = m_fSspWeight_C[y*iWidth + x];
+			  }
+		  }
+#endif
+#if SVIDEO_ROTATED_SPHERE
+		  else if (m_codingGeoType == SVIDEO_ROTATEDSPHERE)
+		  {
+			  if (!chan)
+			  {
+				  fWeight = m_fRspWeight_Y[iWidth*y + x];
+			  }
+			  else
+			  {
+				  fWeight = m_fRspWeight_C[y*iWidth + x];
+			  }
+		  }
+#endif
+#if SVIDEO_ERP_PADDING
+		  else if (m_codingGeoType == SVIDEO_EQUIRECT && m_bPERP)
+		  {
+#if 1
+			  ChromaFormat fmt = pcPicD->getChromaFormat();
+			  if ((x < (SVIDEO_ERP_PAD_L >> getComponentScaleX(ch, fmt))) || (x >= (iWidth - (SVIDEO_ERP_PAD_R >> getComponentScaleX(ch, fmt)))))
+				  fWeight = 0;
+			  else
+				  fWeight = (!chan) ? m_fErpWeight_Y[y] : m_fErpWeight_C[y];
+#else
+			  if (!chan)
+			  {
+				  if ((x < SVIDEO_ERP_PAD_L) || (x >= (iWidth - SVIDEO_ERP_PAD_R)))
+					  fWeight = 0;
+				  else
+					  fWeight = m_fErpWeight_Y[y];
+			  }
+			  else
+			  {
+				  ComponentID chId = ComponentID(chan);
+				  ChromaFormat fmt = pcPicD->getChromaFormat();
+
+				  if ((x < (SVIDEO_ERP_PAD_L >> getComponentScaleX(chId, fmt))) || (x >= (iWidth - (SVIDEO_ERP_PAD_R >> getComponentScaleX(chId, fmt)))))
+					  fWeight = 0;
+				  else
+					  fWeight = m_fErpWeight_C[y];
+			  }
+#endif
+		  }
+#endif
+
+		  if (fWeight > 0)
+			  fWeightSum += fWeight;
+		  assert(iDiff <= 255);
+		  SSDwpsnr += iDiff * iDiff*fWeight;
+	  }
+	  fclose(file);
+
+	  const Int maxval = 255 << (iBitDepthForPSNRCalc[toChannelType(ch)] - 8);
+	  //const Double fRefValue = (Double) maxval * maxval * iSize;
+
+	  m_dWSPSNR[ch] = (SSDwpsnr ? 10.0 * log10((maxval * maxval*fWeightSum) / (Double)SSDwpsnr) : 999.99);
+  }
+
+  /*
   for(Int chan=0; chan<pcPicD->getNumberValidComponents(); chan++)
   {
     const ComponentID ch=ComponentID(chan);
@@ -2156,6 +2348,7 @@ Void TWSPSNRMetric::xCalculateWSPSNR( TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPic
       }
       for(Int x = 0; x < iWidth; x++ )
       {
+		//if ()
         Intermediate_Int iDiff = (Intermediate_Int)( (pOrg[x]<<iReferenceBitShift[toChannelType(ch)]) - (pRec[x]<<iOutputBitShift[toChannelType(ch)]) );
         if(  (m_codingGeoType == SVIDEO_CUBEMAP) 
 #if SVIDEO_ADJUSTED_CUBEMAP
@@ -2302,7 +2495,7 @@ Void TWSPSNRMetric::xCalculateWSPSNR( TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPic
     //const Double fRefValue = (Double) maxval * maxval * iSize;
 
     m_dWSPSNR[ch]         = ( SSDwpsnr ? 10.0 * log10( (maxval * maxval*fWeightSum) / (Double)SSDwpsnr ) : 999.99 );
-  }
+  }*/
 }
 
 #if SVIDEO_WSPSNR_E2E

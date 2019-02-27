@@ -2276,7 +2276,7 @@ Void TEncGOP::xCalculateAddPSNR( TComPic* pcPic, TComPicYuv* pcPicD, const Acces
 		++iSize;
 		//Intermediate_Int iDiff = (Intermediate_Int)((pOrg + (y % iWidth))[x] - (pRec + (y % iWidth))[x]);o
 		Intermediate_Int iDiff = (Intermediate_Int)((pOrg + (y * iOrgStride))[x] - (pRec + (y * iRecStride))[x]);
-		if (abs(iDiff) > 255) {
+		if ((pOrg + (y * iOrgStride))[x] >255 || (pOrg + (y * iOrgStride))[x] < 0 || (pRec + (y * iRecStride))[x] >255 || (pRec + (y * iRecStride))[x] < 0) {
 			printf("Org:%d, Rec:%d\nx:%d, y:%d", (pOrg + (y * iOrgStride))[x], (pRec + (y * iRecStride))[x], x, y);
 		}
 		//if (iWidth < x || iHeight < y) {
