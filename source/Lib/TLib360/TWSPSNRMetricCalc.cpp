@@ -2123,7 +2123,7 @@ Void TWSPSNRMetric::xCalculateWSPSNR( TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPic
   TComPicYuv &picd=*pcPicD;
   //Double SSDspsnr[3]={0, 0 ,0};
   //ChromaFormat chromaFormat = pcPicD->getChromaFormat();
-  for (Int chan = 0; chan < pcPicD->getNumberValidComponents(); chan++)
+  /*for (Int chan = 0; chan < pcPicD->getNumberValidComponents(); chan++)
   {
 	  const ComponentID ch = ComponentID(chan);
 	  const Pel*  pOrg = pcOrgPicYuv->getAddr(ch);
@@ -2312,9 +2312,9 @@ Void TWSPSNRMetric::xCalculateWSPSNR( TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPic
 	  //const Double fRefValue = (Double) maxval * maxval * iSize;
 
 	  m_dWSPSNR[ch] = (SSDwpsnr ? 10.0 * log10((maxval * maxval*fWeightSum) / (Double)SSDwpsnr) : 999.99);
-  }
+  }*/
 
-  /*
+  
   for(Int chan=0; chan<pcPicD->getNumberValidComponents(); chan++)
   {
     const ComponentID ch=ComponentID(chan);
@@ -2495,7 +2495,7 @@ Void TWSPSNRMetric::xCalculateWSPSNR( TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPic
     //const Double fRefValue = (Double) maxval * maxval * iSize;
 
     m_dWSPSNR[ch]         = ( SSDwpsnr ? 10.0 * log10( (maxval * maxval*fWeightSum) / (Double)SSDwpsnr ) : 999.99 );
-  }*/
+  }
 }
 
 #if SVIDEO_WSPSNR_E2E

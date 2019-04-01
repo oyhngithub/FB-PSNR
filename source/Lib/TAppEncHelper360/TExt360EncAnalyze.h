@@ -83,7 +83,7 @@ public:
 
 
 private:
-
+  PSNRSumValues m_FBPSNRSum;
 #if SVIDEO_SPSNR_NN
   Bool          m_bSPSNREnabled;
   PSNRSumValues m_SPSNRSum;
@@ -131,6 +131,8 @@ private:
 #endif
 
 public:
+	Void    addFBPSNR(Double fbpsnr[MAX_NUM_COMPONENT]) { m_FBPSNRSum += fbpsnr; }
+	Double  getFBpsnr(ComponentID compID) const { return m_FBPSNRSum.v[compID]; }
 #if SVIDEO_SPSNR_NN
   Void    setSPSNREnabled(Bool b)                          { m_bSPSNREnabled = b; }
   Void    addSPSNR( Double spsnr[MAX_NUM_COMPONENT])       { m_SPSNRSum+=spsnr;   }

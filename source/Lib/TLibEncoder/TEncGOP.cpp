@@ -2240,7 +2240,7 @@ Void TEncGOP::xCalculateAddPSNR( TComPic* pcPic, TComPicYuv* pcPicD, const Acces
 
     UInt64 uiSSDtemp=0;
 	//Original
-	/*
+	
     for(Int y = 0; y < iHeight; y++ )
     {
       for(Int x = 0; x < iWidth; x++ )
@@ -2250,41 +2250,53 @@ Void TEncGOP::xCalculateAddPSNR( TComPic* pcPic, TComPicYuv* pcPicD, const Acces
       }
       pOrg += iOrgStride;
       pRec += iRecStride;
-    }*/
-
+    }
+	/*
 	//-- Added by Ma Guilong
 	
 	//Test coordinates
 	//printf("iHeight: %d, iWidth: %d\n", iHeight, iWidth);
 
 
-	iSize = 0;
+	//iSize = 0;
 	//char * features = "features.txt";
 	//std::string  fullName = inputVideoName;
 	//fullName = fullName.substr(0, fullName.find("."));
 	//fullName += ".txt";
 
-	FILE* file = fopen(TExt360AppEncCfg::m_featureFileName.c_str(), "r");
-	int x, y;
-	x = y = 0;
+	//FILE* file = fopen(TExt360AppEncCfg::m_featureFileName.c_str(), "r");
+	//double lat, lon;
+	//int x, y;
+	//x = y = 0;
 
-	while (fscanf(file, "%d %d", &x, &y) == 2) {
-		if (ch){
-			x >>= 1;
-			y >>= 1;
-		}
-		++iSize;
-		//Intermediate_Int iDiff = (Intermediate_Int)((pOrg + (y % iWidth))[x] - (pRec + (y % iWidth))[x]);o
-		Intermediate_Int iDiff = (Intermediate_Int)((pOrg + (y * iOrgStride))[x] - (pRec + (y * iRecStride))[x]);
-		if ((pOrg + (y * iOrgStride))[x] >255 || (pOrg + (y * iOrgStride))[x] < 0 || (pRec + (y * iRecStride))[x] >255 || (pRec + (y * iRecStride))[x] < 0) {
-			printf("Org:%d, Rec:%d\nx:%d, y:%d", (pOrg + (y * iOrgStride))[x], (pRec + (y * iRecStride))[x], x, y);
-		}
+	//int edgeNumbers, featureNumbers;
+	//// read longtitude, latitude
+	//if (fscanf(file, "%d %d", &edgeNumbers, &featureNumbers) != 2)
+	//{
+	//	printf("SphData file does not exist.\n");
+	//	exit(EXIT_FAILURE);
+	//	fclose(file);
+	//}
+	//iSize = edgeNumbers + featureNumbers;
+
+	//while (fscanf(file, "%l %l", &lon, &lat) == 2) {
+	//	x = (lon + S_PI) * 2 * S_PI * iWidth - 0.5;
+	//	y = (S_PI / 2 - lat) * S_PI * iHeight - 0.5;
+	//	if (ch){
+	//		x >>= 1;
+	//		y >>= 1;
+	//	}
+	//	//Intermediate_Int iDiff = (Intermediate_Int)((pOrg + (y % iWidth))[x] - (pRec + (y % iWidth))[x]);o
+	//	Intermediate_Int iDiff = (Intermediate_Int)((pOrg + (y * iOrgStride))[x] - (pRec + (y * iRecStride))[x]);
+	//	if ((pOrg + (y * iOrgStride))[x] >255 || (pOrg + (y * iOrgStride))[x] < 0 || (pRec + (y * iRecStride))[x] >255 || (pRec + (y * iRecStride))[x] < 0) {
+	//		printf("Org:%d, Rec:%d\nx:%d, y:%d", (pOrg + (y * iOrgStride))[x], (pRec + (y * iRecStride))[x], x, y);
+	//	}
 		//if (iWidth < x || iHeight < y) {
 		//	printf("x:%d, y:%d", x, y);
 		//}
-		uiSSDtemp += iDiff * iDiff;
-	}
-	
+		//uiSSDtemp += iDiff * iDiff;
+	//}
+	*/
 
     const Int maxval = 255 << (pcPic->getPicSym()->getSPS().getBitDepth(toChannelType(ch)) - 8);
     const Double fRefValue = (Double) maxval * maxval * iSize;

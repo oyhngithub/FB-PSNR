@@ -1797,7 +1797,7 @@ Bool TExt360AppEncCfg::verifyParameters()
 
 Void TExt360AppEncCfg::outputConfigurationSummary()
 {
-  printf("\n\n-----360Lib software version [%s]-----\n", VERSION_360Lib);
+  printf("\n-----360Lib software version [%s]-----\n", VERSION_360Lib);
   printf("-----360 video parameters----\n");
   printf("SphereVideo:%d\n", m_bSVideo);
   printf("FeatureFileName:%s\n", m_featureFileName.c_str());//Added by MaGuilong

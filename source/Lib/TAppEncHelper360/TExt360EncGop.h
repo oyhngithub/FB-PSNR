@@ -39,6 +39,7 @@
 class TComPic;
 class TEncAnalyze;
 class TEncGOP;
+#include "TLib360/TFBPSNRMetricCalc.h"
 
 #include "TLib360/TGeometry.h"
 #if SVIDEO_SPSNR_NN
@@ -69,6 +70,7 @@ public:
   Void printPerPOCInfo();
 
 private:
+  TFBPSNRMetric            m_cFBPSNRMetric;
 
 #if SVIDEO_E2E_METRICS
   TVideoIOYuv *m_pcTVideoIOYuvInputFile;  //note: reference;
@@ -117,7 +119,7 @@ private:
 #endif
 
 public:
-
+  TFBPSNRMetric* getFBPSNRMetric() { return &m_cFBPSNRMetric; }
 #if SVIDEO_E2E_METRICS
   TComPicYuv* getOrigPicYuv() {return m_pcOrgPicYuv;};
   TComPicYuv* getRecPicYuv() {return m_pcRecPicYuv;};

@@ -222,85 +222,58 @@ void TSPSNRMetric::createTable(TGeometry *pcCodingGeomtry)
   // ====================================================================================================================
 }
 
-Void TSPSNRMetric::xCalculateSPSNR( TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPicD )
+Void TSPSNRMetric::xCalculateSPSNR(TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPicD)
 {
-  Int iNumPoints = m_iSphNumPoints;
-  Int iBitDepthForPSNRCalc[MAX_NUM_CHANNEL_TYPE];
-  Int iReferenceBitShift[MAX_NUM_CHANNEL_TYPE];
-  Int iOutputBitShift[MAX_NUM_CHANNEL_TYPE];
-  iBitDepthForPSNRCalc[CHANNEL_TYPE_LUMA] = std::max(m_outputBitDepth[CHANNEL_TYPE_LUMA], m_referenceBitDepth[CHANNEL_TYPE_LUMA]);
-  iBitDepthForPSNRCalc[CHANNEL_TYPE_CHROMA] = std::max(m_outputBitDepth[CHANNEL_TYPE_CHROMA], m_referenceBitDepth[CHANNEL_TYPE_CHROMA]);
-  iReferenceBitShift[CHANNEL_TYPE_LUMA] = iBitDepthForPSNRCalc[CHANNEL_TYPE_LUMA] - m_referenceBitDepth[CHANNEL_TYPE_LUMA];
-  iReferenceBitShift[CHANNEL_TYPE_CHROMA] = iBitDepthForPSNRCalc[CHANNEL_TYPE_CHROMA] - m_referenceBitDepth[CHANNEL_TYPE_CHROMA];
-  iOutputBitShift[CHANNEL_TYPE_LUMA] = iBitDepthForPSNRCalc[CHANNEL_TYPE_LUMA] - m_outputBitDepth[CHANNEL_TYPE_LUMA];
-  iOutputBitShift[CHANNEL_TYPE_CHROMA] = iBitDepthForPSNRCalc[CHANNEL_TYPE_CHROMA] - m_outputBitDepth[CHANNEL_TYPE_CHROMA];
+	Int iNumPoints = m_iSphNumPoints;
+	Int iBitDepthForPSNRCalc[MAX_NUM_CHANNEL_TYPE];
+	Int iReferenceBitShift[MAX_NUM_CHANNEL_TYPE];
+	Int iOutputBitShift[MAX_NUM_CHANNEL_TYPE];
+	iBitDepthForPSNRCalc[CHANNEL_TYPE_LUMA] = std::max(m_outputBitDepth[CHANNEL_TYPE_LUMA], m_referenceBitDepth[CHANNEL_TYPE_LUMA]);
+	iBitDepthForPSNRCalc[CHANNEL_TYPE_CHROMA] = std::max(m_outputBitDepth[CHANNEL_TYPE_CHROMA], m_referenceBitDepth[CHANNEL_TYPE_CHROMA]);
+	iReferenceBitShift[CHANNEL_TYPE_LUMA] = iBitDepthForPSNRCalc[CHANNEL_TYPE_LUMA] - m_referenceBitDepth[CHANNEL_TYPE_LUMA];
+	iReferenceBitShift[CHANNEL_TYPE_CHROMA] = iBitDepthForPSNRCalc[CHANNEL_TYPE_CHROMA] - m_referenceBitDepth[CHANNEL_TYPE_CHROMA];
+	iOutputBitShift[CHANNEL_TYPE_LUMA] = iBitDepthForPSNRCalc[CHANNEL_TYPE_LUMA] - m_outputBitDepth[CHANNEL_TYPE_LUMA];
+	iOutputBitShift[CHANNEL_TYPE_CHROMA] = iBitDepthForPSNRCalc[CHANNEL_TYPE_CHROMA] - m_outputBitDepth[CHANNEL_TYPE_CHROMA];
 
-  memset(m_dSPSNR, 0, sizeof(Double)*3);
-  TComPicYuv &picd=*pcPicD;
-  Double SSDspsnr[3]={0, 0 ,0};
+	memset(m_dSPSNR, 0, sizeof(Double) * 3);
+	TComPicYuv &picd = *pcPicD;
+	Double SSDspsnr[3] = { 0, 0 ,0 };
 
-  for(Int chan=0; chan<pcPicD->getNumberValidComponents(); chan++)
-  {
-    const ComponentID ch=ComponentID(chan);
-    const Pel*  pOrg       = pcOrgPicYuv->getAddr(ch);
-    const Int   iOrgStride = pcOrgPicYuv->getStride(ch);
-    const Pel*  pRec       = picd.getAddr(ch);
-    const Int   iRecStride = picd.getStride(ch);
+	for (Int chan = 0; chan < pcPicD->getNumberValidComponents(); chan++)
+	{
+		const ComponentID ch = ComponentID(chan);
+		const Pel*  pOrg = pcOrgPicYuv->getAddr(ch);
+		const Int   iOrgStride = pcOrgPicYuv->getStride(ch);
+		const Pel*  pRec = picd.getAddr(ch);
+		const Int   iRecStride = picd.getStride(ch);
 
-	//Added by Ma Guilong
-	
-	iNumPoints = 0;
-	//std::string  fullName = inputVideoName;
-	//fullName = fullName.substr(0, fullName.find("."));
-	//fullName += ".txt";
-	//const char* features = fullName.c_str();
-	//char * features = "features.txt"; //OLD VERSION
-	FILE* file = fopen(TExt360AppEncCfg::m_featureFileName.c_str(), "r");
-	int x, y;
-	x = y = 0;
-
-	while (fscanf(file, "%d %d", &x, &y) == 2) {
-		if (ch) {
-			x >>= pcPicD->getComponentScaleX(COMPONENT_Cb);
-			y >>= pcPicD->getComponentScaleX(COMPONENT_Cb);
+		for (Int np = 0; np < iNumPoints; np++)
+		{
+			if (!chan)
+			{
+				Int x_loc = (Int)(m_fpTable[np].x);
+				Int y_loc = (Int)(m_fpTable[np].y);
+				Intermediate_Int iDifflp = (pOrg[x_loc + (y_loc*iOrgStride)] << iReferenceBitShift[toChannelType(ch)]) - (pRec[x_loc + (y_loc*iRecStride)] << iOutputBitShift[toChannelType(ch)]);
+				SSDspsnr[chan] += iDifflp * iDifflp;
+			}
+			else
+			{
+				Int x_loc = Int(m_fpTable[np].x >> pcPicD->getComponentScaleX(COMPONENT_Cb));
+				Int y_loc = Int(m_fpTable[np].y >> pcPicD->getComponentScaleY(COMPONENT_Cb));
+				Intermediate_Int iDifflp = (pOrg[x_loc + (y_loc*iOrgStride)] << iReferenceBitShift[toChannelType(ch)]) - (pRec[x_loc + (y_loc*iRecStride)] << iOutputBitShift[toChannelType(ch)]);
+				SSDspsnr[chan] += iDifflp * iDifflp;
+			}
 		}
-		++iNumPoints;
-		//Intermediate_Int iDiff = (Intermediate_Int)(((pOrg + (y % iOrgStride))[x]) << iReferenceBitShift[toChannelType(ch)] - ((pRec + (y % iRecStride))[x]) << iReferenceBitShift[toChannelType(ch)]);
-		Intermediate_Int iDiff = (Intermediate_Int)((pOrg[(y * iOrgStride) + x] << iReferenceBitShift[toChannelType(ch)]) - ((pRec[y * iRecStride + x]) << iReferenceBitShift[toChannelType(ch)]));
-		if (abs(iDiff) > 255) {
-			printf("Org:%d, Rec:%d\nx:%d, y:%d", (Intermediate_Int)((pOrg[(y * iOrgStride) + x] << iReferenceBitShift[toChannelType(ch)]),
-				((pRec[y * iRecStride + x]) << iReferenceBitShift[toChannelType(ch)]), x, y));
-		}
-		SSDspsnr[chan] += iDiff * iDiff;
 	}
-	
-    /*for (Int np = 0; np < iNumPoints; np++)
-    {
-      if (!chan)
-      {
-        Int x_loc=(Int)(m_fpTable[np].x);
-        Int y_loc=(Int)(m_fpTable[np].y);
-        Intermediate_Int iDifflp=  (pOrg[x_loc+(y_loc*iOrgStride)]<<iReferenceBitShift[toChannelType(ch)]) - (pRec[x_loc+(y_loc*iRecStride)]<<iOutputBitShift[toChannelType(ch)]);
-        SSDspsnr[chan]+= iDifflp*iDifflp;
-      }
-      else
-      {
-        Int x_loc = Int(m_fpTable[np].x >> pcPicD->getComponentScaleX(COMPONENT_Cb));
-        Int y_loc = Int(m_fpTable[np].y >> pcPicD->getComponentScaleY(COMPONENT_Cb));
-        Intermediate_Int iDifflp=  (pOrg[x_loc+(y_loc*iOrgStride)]<<iReferenceBitShift[toChannelType(ch)]) - (pRec[x_loc+(y_loc*iRecStride)]<<iOutputBitShift[toChannelType(ch)]);
-        SSDspsnr[chan]+= iDifflp*iDifflp;
-      }
-    }*/
-  }
 
-  for (Int ch_indx = 0; ch_indx < pcPicD->getNumberValidComponents(); ch_indx++)
-  {
-    const ComponentID ch=ComponentID(ch_indx);
-    const Int maxval = 255<<(iBitDepthForPSNRCalc[toChannelType(ch)]-8) ;
+	for (Int ch_indx = 0; ch_indx < pcPicD->getNumberValidComponents(); ch_indx++)
+	{
+		const ComponentID ch = ComponentID(ch_indx);
+		const Int maxval = 255 << (iBitDepthForPSNRCalc[toChannelType(ch)] - 8);
 
-    Double fReflpsnr = Double(iNumPoints)*maxval*maxval;
-    m_dSPSNR[ch_indx] = ( SSDspsnr[ch_indx] ? 10.0 * log10( fReflpsnr / (Double)SSDspsnr[ch_indx] ) : 999.99 );
-  }
+		Double fReflpsnr = Double(iNumPoints)*maxval*maxval;
+		m_dSPSNR[ch_indx] = (SSDspsnr[ch_indx] ? 10.0 * log10(fReflpsnr / (Double)SSDspsnr[ch_indx]) : 999.99);
+	}
 }
 
 #if SVIDEO_CF_SPSNR_NN

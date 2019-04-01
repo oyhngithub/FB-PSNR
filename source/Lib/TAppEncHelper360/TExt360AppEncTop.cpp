@@ -88,6 +88,7 @@ Void TExt360AppEncTop::xDestroy()
 
 Void TExt360AppEncTop::xCreate(TEncGOP &encGop, TComPicYuv &yuvOrig)
 {
+
 #if SVIDEO_E2E_METRICS
   m_cTVideoIOYuvInputFile4E2EMetrics.open( m_cfg.m_inputFileName,     false, m_cfg.m_inputBitDepth, m_cfg.m_MSBExtendedBitDepth, m_cfg.m_internalBitDepth );
   m_cTVideoIOYuvInputFile4E2EMetrics.skipFrames(m_cfg.m_FrameSkip, m_cfg.m_inputFileWidth, m_cfg.m_inputFileHeight, m_cfg.m_InputChromaFormatIDC);
@@ -106,6 +107,7 @@ Void TExt360AppEncTop::xCreate(TEncGOP &encGop, TComPicYuv &yuvOrig)
   {
     TAppEncCfg       &cfg=m_cfg;
     TExt360AppEncCfg &extCfg=cfg.m_ext360;
+
     if(!m_bGeoConvertSkip)
     {
       m_picYuvReadFromFile.create  ( cfg.m_inputFileWidth, cfg.m_inputFileHeight, cfg.m_InputChromaFormatIDC, cfg.m_uiMaxCUWidth, cfg.m_uiMaxCUHeight, cfg.m_uiMaxTotalCUDepth, true );
@@ -166,6 +168,15 @@ Void TExt360AppEncTop::xCreate(TEncGOP &encGop, TComPicYuv &yuvOrig)
       m_ext360EncGop.getDynamicViewPortPSNRMetric()->initDynamicViewPort(extCfg.m_sourceSVideoInfo, extCfg.m_codingSVideoInfo, &extCfg.m_inputGeoParam, extCfg.m_dynamicViewPortPSNRParam, cfg.m_FrameSkip, cfg.m_temporalSubsampleRatio);
     }
 #endif
+	m_ext360EncGop.getFBPSNRMetric()->setOutputBitDepth(cfg.m_internalBitDepth);
+	m_ext360EncGop.getFBPSNRMetric()->setReferenceBitDepth(cfg.m_internalBitDepth);
+	m_ext360EncGop.getFBPSNRMetric()->sphSampoints(extCfg.m_sphFilename);
+#if SVIDEO_E2E_METRICS
+	m_ext360EncGop.getFBPSNRMetric()->createTable(m_pcInputGeomtry);
+#else
+	m_ext360EncGop.getFBPSNRMetric()->createTable(m_pcCodingGeomtry);
+#endif
+
 #if SVIDEO_SPSNR_NN
     m_ext360EncGop.getSPSNRMetric()->setSPSNREnabledFlag(extCfg.m_bSPSNRNNEnabled);
     if(extCfg.m_bSPSNRNNEnabled)

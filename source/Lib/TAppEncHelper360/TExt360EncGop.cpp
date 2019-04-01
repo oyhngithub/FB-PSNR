@@ -78,6 +78,8 @@ TExt360EncGop::~TExt360EncGop()
 
 Void TExt360EncGop::calculatePSNRs(TComPic *pcPic)
 {
+	getFBPSNRMetric()->xCalculateFBPSNR(pcPic->getPicYuvOrg(), pcPic->getPicYuvRec());
+
 #if SVIDEO_E2E_METRICS
   readOrigPicYuv(pcPic->getPOC());
   reconstructPicYuv(pcPic->getPicYuvRec());
@@ -178,7 +180,7 @@ Void TExt360EncGop::calculatePSNRs(TComPic *pcPic)
 Void TExt360EncGop::addResult(TEncAnalyze &encAnalyze)
 {
   TExt360EncAnalyze &ext360EncAnalyze=encAnalyze.getExt360Info();
-
+  ext360EncAnalyze.addFBPSNR(getFBPSNRMetric()->getFBPSNR());
 #if SVIDEO_SPSNR_NN
   if(getSPSNRMetric()->getSPSNREnabled())
   {
