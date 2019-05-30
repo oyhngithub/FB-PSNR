@@ -1,2 +1,2 @@
 # FB-PSNR
-Feature based psnr
+This project is for 360 video quality metric research.
