@@ -88,7 +88,6 @@ private:
   TEncBinCABAC            m_cBinCoderCABAC;               ///< bin coder CABAC
 
   // processing unit
-  TEncGOP                 m_cGOPEncoder;                  ///< GOP encoder
   TEncSlice               m_cSliceEncoder;                ///< slice encoder
   TEncCu                  m_cCuEncoder;                   ///< CU encoder
   // SPS
@@ -126,6 +125,7 @@ public:
   TEncTop();
   virtual ~TEncTop();
 
+  TEncGOP                 m_cGOPEncoder;                  ///< GOP encoder
   Void      create          ();
   Void      destroy         ();
   Void      init            (Bool isFieldCoding);

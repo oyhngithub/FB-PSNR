@@ -132,6 +132,7 @@ Void TSPSNRMetric::sphSampoints(const std::string &cSphDataFile)
   FILE *fp = fopen(cSphDataFile.c_str(),"r");
   if(!fp)
   {
+	  //TODO
     printf("SPSNR-NN is disabled because metadata file (%s) cannot be opened!\n", cSphDataFile.c_str());
     m_bSPSNREnabled = false;
     return;

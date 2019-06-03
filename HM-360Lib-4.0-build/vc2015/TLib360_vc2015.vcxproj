@@ -71,6 +71,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)\vc2015\$(Platform)\$(Configuration)\$(RootNamespace)\</OutDir>
     <IntDir>$(SolutionDir)\vc2015\$(Platform)\$(Configuration)\$(RootNamespace)\</IntDir>
+    <LibraryPath>C:\OpenCV\opencv\build\x64\vc14\lib;$(LibraryPath);C:\boost_1_69_0\stage\lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)\vc2015\$(Platform)\$(Configuration)\$(RootNamespace)\</OutDir>
@@ -106,7 +107,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;EXTENSION_360_VIDEO=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)\..\source\Lib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\boost_1_69_0;$(SolutionDir)\..\source\Lib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -157,6 +158,8 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\source\Lib\TLib360\fftw.cpp" />
+    <ClCompile Include="..\..\source\Lib\TLib360\GBVS.cpp" />
     <ClCompile Include="..\..\source\Lib\TLib360\TAdjustedCubeMap.cpp" />
     <ClCompile Include="..\..\source\Lib\TLib360\TAdjustedEqualArea.cpp" />
     <ClCompile Include="..\..\source\Lib\TLib360\TCPPPSNRMetricCalc.cpp" />
@@ -174,6 +177,7 @@
     <ClCompile Include="..\..\source\Lib\TLib360\TPSNRMetricCalc.cpp" />
     <ClCompile Include="..\..\source\Lib\TLib360\TRotatedSphere.cpp" />
     <ClCompile Include="..\..\source\Lib\TLib360\TSegmentedSphere.cpp" />
+    <ClCompile Include="..\..\source\Lib\TLib360\TSMPSNRMetricCalc.cpp" />
     <ClCompile Include="..\..\source\Lib\TLib360\TSPSNRIMetricCalc.cpp" />
     <ClCompile Include="..\..\source\Lib\TLib360\TSPSNRMetricCalc.cpp" />
     <ClCompile Include="..\..\source\Lib\TLib360\TTsp.cpp" />
@@ -182,6 +186,8 @@
     <ClCompile Include="..\..\source\Lib\TLib360\TWSPSNRMetricCalc.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\source\Lib\TLib360\fftw.h" />
+    <ClInclude Include="..\..\source\Lib\TLib360\GBVS.h" />
     <ClInclude Include="..\..\source\Lib\TLib360\TAdjustedCubeMap.h" />
     <ClInclude Include="..\..\source\Lib\TLib360\TAdjustedEqualArea.h" />
     <ClInclude Include="..\..\source\Lib\TLib360\TCPPPSNRMetricCalc.h" />
@@ -199,6 +205,7 @@
     <ClInclude Include="..\..\source\Lib\TLib360\TPSNRMetricCalc.h" />
     <ClInclude Include="..\..\source\Lib\TLib360\TRotatedSphere.h" />
     <ClInclude Include="..\..\source\Lib\TLib360\TSegmentedSphere.h" />
+    <ClInclude Include="..\..\source\Lib\TLib360\TSMPSNRMetricCalc.h" />
     <ClInclude Include="..\..\source\Lib\TLib360\TSPSNRIMetricCalc.h" />
     <ClInclude Include="..\..\source\Lib\TLib360\TSPSNRMetricCalc.h" />
     <ClInclude Include="..\..\source\Lib\TLib360\TTsp.h" />

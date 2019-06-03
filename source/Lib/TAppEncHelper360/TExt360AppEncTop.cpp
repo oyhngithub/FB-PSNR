@@ -168,14 +168,14 @@ Void TExt360AppEncTop::xCreate(TEncGOP &encGop, TComPicYuv &yuvOrig)
       m_ext360EncGop.getDynamicViewPortPSNRMetric()->initDynamicViewPort(extCfg.m_sourceSVideoInfo, extCfg.m_codingSVideoInfo, &extCfg.m_inputGeoParam, extCfg.m_dynamicViewPortPSNRParam, cfg.m_FrameSkip, cfg.m_temporalSubsampleRatio);
     }
 #endif
-	m_ext360EncGop.getFBPSNRMetric()->setOutputBitDepth(cfg.m_internalBitDepth);
-	m_ext360EncGop.getFBPSNRMetric()->setReferenceBitDepth(cfg.m_internalBitDepth);
-	m_ext360EncGop.getFBPSNRMetric()->sphSampoints(extCfg.m_sphFilename);
-#if SVIDEO_E2E_METRICS
-	m_ext360EncGop.getFBPSNRMetric()->createTable(m_pcInputGeomtry);
-#else
-	m_ext360EncGop.getFBPSNRMetric()->createTable(m_pcCodingGeomtry);
-#endif
+	m_ext360EncGop.getSMPSNRMetric()->setOutputBitDepth(cfg.m_internalBitDepth);
+	m_ext360EncGop.getSMPSNRMetric()->setReferenceBitDepth(cfg.m_internalBitDepth);
+	//m_ext360EncGop.getSMPSNRMetric()->sphSampoints(extCfg.m_sphFilename);
+//#if SVIDEO_E2E_METRICS
+//	m_ext360EncGop.getSMPSNRMetric()->createTable(m_pcInputGeomtry);
+//#else
+//	m_ext360EncGop.getSMPSNRMetric()->createTable(m_pcCodingGeomtry);
+//#endif
 
 #if SVIDEO_SPSNR_NN
     m_ext360EncGop.getSPSNRMetric()->setSPSNREnabledFlag(extCfg.m_bSPSNRNNEnabled);

@@ -53,8 +53,6 @@ class TExt360AppEncTop
 
   TComPicYuv     m_picYuvReadFromFile;  ///< for file reading;
   TComPicYuv     m_picYuvRot;           ///< adjust to frame packed video to normal sphere video;
-  TGeometry     *m_pcInputGeomtry;
-  TGeometry     *m_pcCodingGeomtry;
 
 #if SVIDEO_E2E_METRICS
   TVideoIOYuv                m_cTVideoIOYuvInputFile4E2EMetrics;       ///< input YUV file for end to end metrics calculation;
@@ -71,6 +69,8 @@ class TExt360AppEncTop
   Void xCreate(TEncGOP &encGop, TComPicYuv &yuvOrig);
 
 public:
+	TGeometry     *m_pcInputGeomtry;
+	TGeometry     *m_pcCodingGeomtry;
   TExt360AppEncTop(TAppEncCfg &cfg, TExt360EncGop &ext360Gop, TEncGOP &encGop, TComPicYuv &yuvOrig);
   virtual ~TExt360AppEncTop();
 

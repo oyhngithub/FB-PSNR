@@ -173,10 +173,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\App\TAppEncoder\encmain.cpp" />
+    <ClCompile Include="..\..\source\App\TAppEncoder\GlobalTApp.cpp" />
     <ClCompile Include="..\..\source\App\TAppEncoder\TAppEncCfg.cpp" />
     <ClCompile Include="..\..\source\App\TAppEncoder\TAppEncTop.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\source\App\TAppEncoder\GlobalTApp.h" />
     <ClInclude Include="..\..\source\App\TAppEncoder\TAppEncCfg.h" />
     <ClInclude Include="..\..\source\App\TAppEncoder\TAppEncTop.h" />
   </ItemGroup>

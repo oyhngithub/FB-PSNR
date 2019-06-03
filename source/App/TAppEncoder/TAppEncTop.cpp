@@ -517,7 +517,7 @@ Void TAppEncTop::encode()
   }
 
 #if EXTENSION_360_VIDEO
-  TExt360AppEncTop           ext360(*this, m_cTEncTop.getGOPEncoder()->getExt360Data(), *(m_cTEncTop.getGOPEncoder()), *pcPicYuvOrg);
+  ext360 = new TExt360AppEncTop(*this, m_cTEncTop.getGOPEncoder()->getExt360Data(), *(m_cTEncTop.getGOPEncoder()), *pcPicYuvOrg);
 #endif
 
   while ( !bEos )
@@ -527,9 +527,9 @@ Void TAppEncTop::encode()
 
     // read input YUV file
 #if EXTENSION_360_VIDEO
-    if (ext360.isEnabled())
+    if (ext360->isEnabled())
     {
-      ext360.read(m_cTVideoIOYuvInputFile, *pcPicYuvOrg, cPicYuvTrueOrg, ipCSC);
+      ext360->read(m_cTVideoIOYuvInputFile, *pcPicYuvOrg, cPicYuvTrueOrg, ipCSC);
     }
     else
     {

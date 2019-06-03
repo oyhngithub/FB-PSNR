@@ -39,8 +39,11 @@
 #include <algorithm>
 #include <functional>
 #include "TAppEncHelper360/TExt360AppEncCfg.h"
+#include <../App/TAppEncoder/GlobalTApp.h>
+
 #include "TEncTop.h"
 #include "TEncGOP.h"
+#include "TAppEncHelper360/TExt360AppEncTop.h"
 #include "TEncAnalyze.h"
 #include "libmd5/MD5.h"
 #include "TLibCommon/SEI.h"
@@ -1162,6 +1165,21 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
     {
       iGOPid=effFieldIRAPMap.adjustGOPid(iGOPid);
     }
+	//TODO
+	++GlobalTApp::frameCnt;
+	int currentFrame = GlobalTApp::offset + iGOPid;
+	std::string fileName = TExt360AppEncCfg::m_featureFileName + "_" + std::to_string(currentFrame) + ".txt";
+	// read feature
+	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRMetric.sphSampoints(fileName);
+	// create table
+#if SVIDEO_E2E_METRICS
+	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRMetric.createTable((GlobalTApp::getTApp())->ext360->m_pcInputGeomtry);
+#else
+	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRMetric.createTable((GlobalTApp::getTApp())->ext360->m_pcCodingGeomtry);
+#endif
+	if (iGOPid == m_iGopSize - 1) {
+		GlobalTApp::offset += m_iGopSize;
+	}
 
     //-- For time output for each slice
     clock_t iBeforeTime = clock();

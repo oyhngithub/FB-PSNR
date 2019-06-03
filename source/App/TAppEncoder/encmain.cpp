@@ -39,6 +39,7 @@
 #include <iostream>
 #include "TAppEncTop.h"
 #include "TAppCommon/program_options_lite.h"
+#include "globalTApp.h"
 
 //! \ingroup TAppEncoder
 //! \{
@@ -51,7 +52,8 @@
 
 int main(int argc, char* argv[])
 {
-  TAppEncTop  cTAppEncTop;
+  GlobalTApp *gb = new GlobalTApp();
+  TAppEncTop *cTAppEncTop = GlobalTApp::getTApp();
 
   // print information
   fprintf( stdout, "\n" );
@@ -62,14 +64,14 @@ int main(int argc, char* argv[])
   fprintf( stdout, "\n\n" );
 
   // create application encoder class
-  cTAppEncTop.create();
+  cTAppEncTop->create();
 
   // parse configuration
   try
   {
-    if(!cTAppEncTop.parseCfg( argc, argv ))
+    if(!cTAppEncTop->parseCfg( argc, argv ))
     {
-      cTAppEncTop.destroy();
+      cTAppEncTop->destroy();
 #if ENVIRONMENT_VARIABLE_DEBUG_AND_TEST
       EnvVar::printEnvVar();
 #endif
@@ -95,14 +97,14 @@ int main(int argc, char* argv[])
   clock_t lBefore = clock();
 
   // call encoding function
-  cTAppEncTop.encode();
+  cTAppEncTop->encode();
 
   // ending time
   dResult = (Double)(clock()-lBefore) / CLOCKS_PER_SEC;
   printf("\n Total Time: %12.3f sec.\n", dResult);
 
   // destroy application encoder class
-  cTAppEncTop.destroy();
+  cTAppEncTop->destroy();
 
   return 0;
 }

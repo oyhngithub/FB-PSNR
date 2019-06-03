@@ -91,7 +91,7 @@ protected:
 public:
   TAppEncTop();
   virtual ~TAppEncTop();
-
+  TExt360AppEncTop* ext360;
   Void        encode      ();                               ///< main encoding function
   TEncTop&    getTEncTop  ()   { return  m_cTEncTop; }      ///< return encoder class pointer reference
 
