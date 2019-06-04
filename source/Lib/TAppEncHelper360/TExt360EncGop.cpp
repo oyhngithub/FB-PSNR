@@ -79,7 +79,7 @@ TExt360EncGop::~TExt360EncGop()
 Void TExt360EncGop::calculatePSNRs(TComPic *pcPic)
 {
 	getSMPSNRMetric()->xCalculateSMPSNR(pcPic->getPicYuvOrg(), pcPic->getPicYuvRec());
-
+	getSMPSNRVMetric()->xCalculateSMPSNRV(pcPic->getPicYuvOrg(), pcPic->getPicYuvRec());
 #if SVIDEO_E2E_METRICS
   readOrigPicYuv(pcPic->getPOC());
   reconstructPicYuv(pcPic->getPicYuvRec());
@@ -263,6 +263,10 @@ Void TExt360EncGop::addResult(TEncAnalyze &encAnalyze)
 
 Void TExt360EncGop::printPerPOCInfo()
 {
+	if (getSMPSNRMetric()->getSMPSNREnabled())
+	{
+		printf(" [Y-SMPSNR-Uni %6.4lf dB   U-SMPSNR-Uni %6.4lf dB   V-SMPSNR-Uni %6.4lf dB]", getSMPSNRMetric()->getSMPSNR()[COMPONENT_Y], getSMPSNRMetric()->getSMPSNR()[COMPONENT_Cb], getSMPSNRMetric()->getSMPSNR()[COMPONENT_Cr]);
+	}
 #if SVIDEO_E2E_METRICS
 #if SVIDEO_WSPSNR && SVIDEO_WSPSNR_REPORT_PER_FRAME
   if(getWSPSNRMetric()->getWSPSNREnabled())

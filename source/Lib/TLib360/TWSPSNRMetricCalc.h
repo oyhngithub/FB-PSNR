@@ -47,7 +47,7 @@
 
 class TWSPSNRMetric
 {
-private:
+public:
   Bool      m_bEnabled;
   Double    m_dWSPSNR[3];
   

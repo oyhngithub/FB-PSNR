@@ -5,23 +5,23 @@
  * Doc:
  */
 
-#include "TSMPSNRMetricCalc.h"
+#include "TSMPSNRVMetricCalc.h"
 #include "TAppEncHelper360/TExt360AppEncCfg.h"
 #include <sstream>
 #include <fstream>
 #include <iostream>
 
 
-TSMPSNRMetric::TSMPSNRMetric()
-	: m_bSMPSNREnabled(false)
+TSMPSNRVMetric::TSMPSNRVMetric()
+	: m_bSMPSNRVEnabled(false)
 	, m_pCart3D(NULL)
 	, m_fpTable(NULL)
 {
-	m_dSMPSNR[0] = m_dSMPSNR[1] = m_dSMPSNR[2] = 0;
+	m_dSMPSNRV[0] = m_dSMPSNRV[1] = m_dSMPSNRV[2] = 0;
 }
 
 
-TSMPSNRMetric::~TSMPSNRMetric()
+TSMPSNRVMetric::~TSMPSNRVMetric()
 {
 	if (m_pCart3D)
 	{
@@ -36,7 +36,7 @@ TSMPSNRMetric::~TSMPSNRMetric()
 
 
 
-Void TSMPSNRMetric::setOutputBitDepth(Int iOutputBitDepth[MAX_NUM_CHANNEL_TYPE])
+Void TSMPSNRVMetric::setOutputBitDepth(Int iOutputBitDepth[MAX_NUM_CHANNEL_TYPE])
 {
 	for (Int i = 0; i < MAX_NUM_CHANNEL_TYPE; i++)
 	{
@@ -44,7 +44,7 @@ Void TSMPSNRMetric::setOutputBitDepth(Int iOutputBitDepth[MAX_NUM_CHANNEL_TYPE])
 	}
 }
 
-Void TSMPSNRMetric::setReferenceBitDepth(Int iReferenceBitDepth[MAX_NUM_CHANNEL_TYPE])
+Void TSMPSNRVMetric::setReferenceBitDepth(Int iReferenceBitDepth[MAX_NUM_CHANNEL_TYPE])
 {
 	for (Int i = 0; i < MAX_NUM_CHANNEL_TYPE; i++)
 	{
@@ -53,7 +53,7 @@ Void TSMPSNRMetric::setReferenceBitDepth(Int iReferenceBitDepth[MAX_NUM_CHANNEL_
 }
 
 // get sphere points    TODO
-Void TSMPSNRMetric::sphSampoints(const std::string &cSphDataFile)
+/*Void TSMPSNRVMetric::sphSampoints(const std::string &cSphDataFile)
 {
 	FILE* fp = fopen(cSphDataFile.c_str(), "r");
 	int x, y;
@@ -80,7 +80,7 @@ Void TSMPSNRMetric::sphSampoints(const std::string &cSphDataFile)
 	fclose(fp);
 }
 
-void TSMPSNRMetric::sphToCart(CPos2D* sph, CPos3D* out)
+void TSMPSNRVMetric::sphToCart(CPos2D* sph, CPos3D* out)
 {
 	POSType fLat = (POSType)(sph->x*S_PI / 180.0);
 	POSType fLon = (POSType)(sph->y*S_PI / 180.0);
@@ -91,7 +91,7 @@ void TSMPSNRMetric::sphToCart(CPos2D* sph, CPos3D* out)
 }
 
 // create saliencymap table   TODO
-void TSMPSNRMetric::createTable(TGeometry *pcCodingGeomtry)
+void TSMPSNRVMetric::createTable(TGeometry *pcCodingGeomtry)
 {
 	Int iNumPoints = m_iSphNumPoints;
 	CPos2D In2d;
@@ -118,7 +118,7 @@ void TSMPSNRMetric::createTable(TGeometry *pcCodingGeomtry)
 		tmpPos.v = (Int)(posOut.y);
 		pcCodingGeomtry->clamp(&tmpPos);
 		pcCodingGeomtry->geoToFramePack(&tmpPos, &m_fpTable[np]);
-	}
+	}*/
 	// ====================================================================================================================
 	// DIY
 	//std::ofstream outfile("CountData.txt", std::ios::out | std::ios::binary);
@@ -139,11 +139,11 @@ void TSMPSNRMetric::createTable(TGeometry *pcCodingGeomtry)
 	//outfile.close();
 
 	// ====================================================================================================================
-}
+//}
 
 // pass the pics before and after the encode
 // m_fpTable stores all the data that already transform into different projections
-Void TSMPSNRMetric::xCalculateSMPSNR(TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPicD)
+Void TSMPSNRVMetric::xCalculateSMPSNRV(TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPicD)
 {
 
 	Int iNumPoints = m_iSphNumPoints;
@@ -157,10 +157,17 @@ Void TSMPSNRMetric::xCalculateSMPSNR(TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPicD
 	iOutputBitShift[CHANNEL_TYPE_LUMA] = iBitDepthForPSNRCalc[CHANNEL_TYPE_LUMA] - m_outputBitDepth[CHANNEL_TYPE_LUMA];
 	iOutputBitShift[CHANNEL_TYPE_CHROMA] = iBitDepthForPSNRCalc[CHANNEL_TYPE_CHROMA] - m_outputBitDepth[CHANNEL_TYPE_CHROMA];
 
-	memset(m_dSMPSNR, 0, sizeof(Double) * 3);
+	memset(m_dSMPSNRV, 0, sizeof(Double) * 3);
 	TComPicYuv &picd = *pcPicD;
-	Double SSDspsnr[3] = { 0, 0 ,0 };
+	Double w1[3] = { 0, 0 ,0 };
+	Double w1Weight[3] = { 0, 0 ,0 };
+	Double w1PSNR[3] = { 0, 0 ,0 };
+	Double w2[3] = { 0, 0 ,0 };
+	Double w2PSNR[3] = { 0, 0 ,0 };
+	Double w3[3] = { 0, 0 ,0 };
+	Double w3PSNR[3] = { 0, 0 ,0 };
 
+	// calculate w1
 	for (Int chan = 0; chan < pcPicD->getNumberValidComponents(); chan++)
 	{
 		const ComponentID ch = ComponentID(chan);
@@ -169,33 +176,223 @@ Void TSMPSNRMetric::xCalculateSMPSNR(TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPicD
 		const Pel*  pRec = picd.getAddr(ch);
 		const Int   iRecStride = picd.getStride(ch);
 
+		const Int   iWidth = pcPicD->getWidth(ch);
+		const Int   iHeight = pcPicD->getHeight(ch);
+		Double fWeight = 1;
+		//Int   iSize   = iWidth*iHeight;
+
+		//Double SSDwpsnr = 0;
+
+
 		for (Int np = 0; np < iNumPoints; np++)
 		{
+			Int x_loc;
+			Int y_loc;
 			if (!chan)
 			{
-				Int x_loc = (Int)(m_fpTable[np].x);
-				Int y_loc = (Int)(m_fpTable[np].y);
-				Intermediate_Int iDifflp = (pOrg[x_loc + (y_loc*iOrgStride)] << iReferenceBitShift[toChannelType(ch)]) - (pRec[x_loc + (y_loc*iRecStride)] << iOutputBitShift[toChannelType(ch)]);
-				SSDspsnr[chan] += iDifflp * iDifflp;
+				x_loc = (Int)(m_fpTable[np].x);
+				y_loc = (Int)(m_fpTable[np].y);
 			}
 			else
 			{
-				Int x_loc = Int(m_fpTable[np].x >> pcPicD->getComponentScaleX(COMPONENT_Cb));
-				Int y_loc = Int(m_fpTable[np].y >> pcPicD->getComponentScaleY(COMPONENT_Cb));
-				Intermediate_Int iDifflp = (pOrg[x_loc + (y_loc*iOrgStride)] << iReferenceBitShift[toChannelType(ch)]) - (pRec[x_loc + (y_loc*iRecStride)] << iOutputBitShift[toChannelType(ch)]);
-				SSDspsnr[chan] += iDifflp * iDifflp;
+				x_loc = Int(m_fpTable[np].x >> pcPicD->getComponentScaleX(COMPONENT_Cb));
+				y_loc = Int(m_fpTable[np].y >> pcPicD->getComponentScaleY(COMPONENT_Cb));
 			}
+
+			int x, y;
+			x = x_loc;
+			y = y_loc;
+
+				if (m_codingGeoType == SVIDEO_EQUIRECT || m_codingGeoType == SVIDEO_NEWUNIFORMMAP)
+				{
+					if (!chan)
+					{
+						fWeight = m_fErpWeight_Y[y];
+					}
+					else
+					{
+						fWeight = m_fErpWeight_C[y];
+					}
+				}
+				if (((pOrg + y * iOrgStride)[x]) > 255 || ((pOrg + y * iOrgStride)[x]) < 0 || ((pRec + y * iRecStride)[x]) > 255 || ((pRec + y * iRecStride)[x]) < 0)
+					printf("x:%d ,y:%d\norg:%d, rec:%d\n", x, y, (pOrg + y * iOrgStride)[x], (pRec + y * iRecStride)[x]);
+				//int test = iReferenceBitShift[toChannelType(ch)];
+				int org = ((pOrg + y * iOrgStride)[x]);
+				int rec = ((pRec + y * iRecStride)[x]);
+				//int refShift = iReferenceBitShift[toChannelType(ch)];
+				//int outputShift = iOutputBitShift[toChannelType(ch)];
+				Intermediate_Int iDiff = (Intermediate_Int)((((pOrg + y * iOrgStride)[x]) << iReferenceBitShift[toChannelType(ch)]) - (((pRec + y * iRecStride)[x]) << iOutputBitShift[toChannelType(ch)]));
+				//Intermediate_Int iDiff = (Intermediate_Int)((pOrg[x] << iReferenceBitShift[toChannelType(ch)]) - (pRec[x] << iOutputBitShift[toChannelType(ch)]));
+
+				if ((m_codingGeoType == SVIDEO_CUBEMAP)
+#if SVIDEO_ADJUSTED_CUBEMAP
+					|| (m_codingGeoType == SVIDEO_ADJUSTEDCUBEMAP)
+#endif
+#if SVIDEO_EQUATORIAL_CYLINDRICAL
+					|| (m_codingGeoType == SVIDEO_EQUATORIALCYLINDRICAL)
+#endif
+#if SVIDEO_EQUIANGULAR_CUBEMAP
+					|| (m_codingGeoType == SVIDEO_EQUIANGULARCUBEMAP)
+#endif
+					)
+				{
+					if (!chan)
+					{
+						if (iWidth / 4 == iHeight / 3 && x >= iWidth / 4 && (y < iHeight / 3 || y >= 2 * iHeight / 3))
+						{
+							fWeight = 0;
+						}
+						else
+						{
+							fWeight = m_fCubeWeight_Y[(m_iCodingFaceWidth)*(y % (m_iCodingFaceHeight)) + (x % (m_iCodingFaceWidth))];
+						}
+
+					}
+					else
+					{
+						if (iWidth / 4 == iHeight / 3 && x >= iWidth / 4 && (y < iHeight / 3 || y >= 2 * iHeight / 3))
+						{
+							fWeight = 0;
+						}
+						else
+						{
+							fWeight = m_fCubeWeight_C[(m_iCodingFaceWidth >> (pcPicD->getComponentScaleX(COMPONENT_Cb)))*(y % (m_iCodingFaceHeight >> (pcPicD->getComponentScaleY(COMPONENT_Cb)))) + (x % (m_iCodingFaceWidth >> (pcPicD->getComponentScaleX(COMPONENT_Cb))))];
+						}
+					}
+				}
+#if SVIDEO_ADJUSTED_EQUALAREA
+				else if (m_codingGeoType == SVIDEO_ADJUSTEDEQUALAREA)
+#else
+				else if (m_codingGeoType == SVIDEO_EQUALAREA)
+#endif
+				{
+					if (!chan)
+					{
+						fWeight = m_fEapWeight_Y[y*iWidth + x];
+					}
+					else
+					{
+						fWeight = m_fEapWeight_C[y*iWidth + x];
+					}
+				}
+				else if (m_codingGeoType == SVIDEO_OCTAHEDRON)
+				{
+					if (!chan)
+					{
+						fWeight = m_fOctaWeight_Y[iWidth*y + x];
+					}
+					else
+					{
+						fWeight = m_fOctaWeight_C[y*iWidth + x];
+					}
+				}
+				else if (m_codingGeoType == SVIDEO_ICOSAHEDRON)
+				{
+					if (!chan)
+					{
+						fWeight = m_fIcoWeight_Y[iWidth*y + x];
+					}
+					else
+					{
+						fWeight = m_fIcoWeight_C[y*iWidth + x];
+					}
+				}
+#if SVIDEO_WSPSNR_SSP
+				else if (m_codingGeoType == SVIDEO_SEGMENTEDSPHERE)
+				{
+					if (!chan)
+					{
+						fWeight = m_fSspWeight_Y[iWidth*y + x];
+					}
+					else
+					{
+						fWeight = m_fSspWeight_C[y*iWidth + x];
+					}
+				}
+#endif
+#if SVIDEO_ROTATED_SPHERE
+				else if (m_codingGeoType == SVIDEO_ROTATEDSPHERE)
+				{
+					if (!chan)
+					{
+						fWeight = m_fRspWeight_Y[iWidth*y + x];
+					}
+					else
+					{
+						fWeight = m_fRspWeight_C[y*iWidth + x];
+					}
+				}
+#endif
+#if SVIDEO_ERP_PADDING
+				else if (m_codingGeoType == SVIDEO_EQUIRECT && m_bPERP)
+				{
+#if 1
+					ChromaFormat fmt = pcPicD->getChromaFormat();
+					if ((x < (SVIDEO_ERP_PAD_L >> getComponentScaleX(ch, fmt))) || (x >= (iWidth - (SVIDEO_ERP_PAD_R >> getComponentScaleX(ch, fmt)))))
+						fWeight = 0;
+					else
+						fWeight = (!chan) ? m_fErpWeight_Y[y] : m_fErpWeight_C[y];
+#else
+					if (!chan)
+					{
+						if ((x < SVIDEO_ERP_PAD_L) || (x >= (iWidth - SVIDEO_ERP_PAD_R)))
+							fWeight = 0;
+						else
+							fWeight = m_fErpWeight_Y[y];
+					}
+					else
+					{
+						ComponentID chId = ComponentID(chan);
+						ChromaFormat fmt = pcPicD->getChromaFormat();
+
+						if ((x < (SVIDEO_ERP_PAD_L >> getComponentScaleX(chId, fmt))) || (x >= (iWidth - (SVIDEO_ERP_PAD_R >> getComponentScaleX(chId, fmt)))))
+							fWeight = 0;
+						else
+							fWeight = m_fErpWeight_C[y];
+					}
+#endif
+				}
+#endif
+				if (fWeight > 0)
+					w1Weight[chan] += fWeight;
+				assert(iDiff <= 255);
+				w1[chan] += iDiff * iDiff*fWeight;
 		}
 	}
-
+	// calculate 3 path individualy
 	for (Int ch_indx = 0; ch_indx < pcPicD->getNumberValidComponents(); ch_indx++)
 	{
 		const ComponentID ch = ComponentID(ch_indx);
 		const Int maxval = 255 << (iBitDepthForPSNRCalc[toChannelType(ch)] - 8);
 
 		Double fReflpsnr = Double(iNumPoints)*maxval*maxval;
-		m_dSMPSNR[ch_indx] = (SSDspsnr[ch_indx] ? 10.0 * log10(fReflpsnr / (Double)SSDspsnr[ch_indx]) : 999.99);
+		w1PSNR[ch_indx] = (w1[ch_indx] ? 10.0 * log10(w1Weight[ch_indx] * fReflpsnr / (Double)w1[ch_indx]) : 999.99);
 	}
+	// calculate w2
+
+
+	// calculate 3 path individualy
+	for (Int ch_indx = 0; ch_indx < pcPicD->getNumberValidComponents(); ch_indx++)
+	{
+		const ComponentID ch = ComponentID(ch_indx);
+		const Int maxval = 255 << (iBitDepthForPSNRCalc[toChannelType(ch)] - 8);
+
+		Double fReflpsnr = Double(iNumPoints)*maxval*maxval;
+		w2[ch_indx] = (w2[ch_indx] ? 10.0 * log10(fReflpsnr / (Double)w2[ch_indx]) : 999.99);
+	}
+
+	// calculate w3
+
+	// calculate 3 path individualy
+	for (Int ch_indx = 0; ch_indx < pcPicD->getNumberValidComponents(); ch_indx++)
+	{
+		const ComponentID ch = ComponentID(ch_indx);
+		const Int maxval = 255 << (iBitDepthForPSNRCalc[toChannelType(ch)] - 8);
+
+		Double fReflpsnr = Double(iNumPoints)*maxval*maxval;
+		w3[ch_indx] = (w3[ch_indx] ? 10.0 * log10(fReflpsnr / (Double)w3[ch_indx]) : 999.99);
+	}
+
 }
 
 // create 2D table 

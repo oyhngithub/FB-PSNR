@@ -403,6 +403,8 @@ Void TExt360AppEncCfg::addOptions(df::program_options_lite::Options &opts, TExt3
 #endif
 
   opts.addOptions()
+  ("SMPSNR,-smpsnr_nn", m_bSMPSNREnabled, true, "Flag to enable smpsnr calculation")
+  ("SMPSNRV,-smpsnrv_nn", m_bSMPSNRVEnabled, true, "Flag to enable smpsnrv calculation")
   ("FeatureFile",								 m_featureFileName,					  std::string(""),								"Spherical points data file name for FB - PSNR calculation")
   ("SphereVideo,-360vid",                        m_bSVideo,                           false,                                "Enable 360 video projection conversion")
   ("InputGeometryType",                          m_sourceSVideoInfo.geoType,          0,                                    "The geometry of input 360 video")

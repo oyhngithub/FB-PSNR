@@ -40,6 +40,7 @@ class TComPic;
 class TEncAnalyze;
 class TEncGOP;
 #include "TLib360/TSMPSNRMetricCalc.h"
+#include "TLib360/TSMPSNRVMetricCalc.h"
 
 #include "TLib360/TGeometry.h"
 #if SVIDEO_SPSNR_NN
@@ -71,7 +72,7 @@ public:
 
 public:
   TSMPSNRMetric            m_cSMPSNRMetric;
-
+  TSMPSNRVMetric		   m_cSMPSNRVMetric;
 #if SVIDEO_E2E_METRICS
   TVideoIOYuv *m_pcTVideoIOYuvInputFile;  //note: reference;
   TComPicYuv  *m_pcOrgPicYuv;
@@ -120,6 +121,7 @@ public:
 
 public:
   TSMPSNRMetric* getSMPSNRMetric() { return &m_cSMPSNRMetric; }
+  TSMPSNRVMetric* getSMPSNRVMetric() { return &m_cSMPSNRVMetric; }
 #if SVIDEO_E2E_METRICS
   TComPicYuv* getOrigPicYuv() {return m_pcOrgPicYuv;};
   TComPicYuv* getRecPicYuv() {return m_pcRecPicYuv;};

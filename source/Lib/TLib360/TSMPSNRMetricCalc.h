@@ -3,7 +3,7 @@
 
 class TSMPSNRMetric
 {
-private:
+public:
 	Bool      m_bSMPSNREnabled;
 	Double    m_dSMPSNR[3];
 

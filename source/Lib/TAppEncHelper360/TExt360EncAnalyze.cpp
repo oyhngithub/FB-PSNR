@@ -122,7 +122,8 @@ Void TExt360EncAnalyze::clear()
 
 Void TExt360EncAnalyze::printHeader()
 {
-	printf(" Y-SMPSNR  "  "U-SMPSNR  "  "V-SMPSNR   ");
+	printf(" Y-SMPSNR-Uni  "  "U-SMPSNR-Uni  "  "V-SMPSNR-Uni   ");
+	printf(" Y-SMPSNRV  "  "U-SMPSNRV  "  "V-SMPSNRV   ");
 #if SVIDEO_E2E_METRICS
 #if SVIDEO_WSPSNR
   if(m_bWSPSNREnabled)
@@ -223,6 +224,11 @@ Void TExt360EncAnalyze::printPSNRs(const UInt numPic)
 		getSMpsnr(COMPONENT_Y) / (Double)numPic,
 		getSMpsnr(COMPONENT_Cb) / (Double)numPic,
 		getSMpsnr(COMPONENT_Cr) / (Double)numPic
+	);
+	printf(" %8.4lf  "   "%8.4lf  "    "%8.4lf   ",
+		getSMpsnrv(COMPONENT_Y) / (Double)numPic,
+		getSMpsnrv(COMPONENT_Cb) / (Double)numPic,
+		getSMpsnrv(COMPONENT_Cr) / (Double)numPic
 	);
 #if SVIDEO_E2E_METRICS
 #if SVIDEO_WSPSNR

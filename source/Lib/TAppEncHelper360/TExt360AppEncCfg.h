@@ -63,6 +63,8 @@ protected:
   Int       m_iCodingFaceHeight;
   Int       m_faceSizeAlignment;
   InputGeoParam m_inputGeoParam;
+  Bool      m_bSMPSNREnabled;
+  Bool      m_bSMPSNRVEnabled;
 #if SVIDEO_VIEWPORT_PSNR
   ViewPortPSNRParam m_viewPortPSNRParam;
 #endif

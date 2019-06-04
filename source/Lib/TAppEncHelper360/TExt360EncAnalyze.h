@@ -84,6 +84,8 @@ public:
 
 private:
   PSNRSumValues m_SMPSNRSum;
+  PSNRSumValues m_SMPSNRVSum;
+
 #if SVIDEO_SPSNR_NN
   Bool          m_bSPSNREnabled;
   PSNRSumValues m_SPSNRSum;
@@ -133,6 +135,9 @@ private:
 public:
 	Void    addSMPSNR(Double smpsnr[MAX_NUM_COMPONENT]) { m_SMPSNRSum += smpsnr; }
 	Double  getSMpsnr(ComponentID compID) const { return m_SMPSNRSum.v[compID]; }
+	Void    addSMPSNRV(Double smpsnrv[MAX_NUM_COMPONENT]) { m_SMPSNRVSum += smpsnrv; }
+	Double  getSMpsnrv(ComponentID compID) const { return m_SMPSNRVSum.v[compID]; }
+
 #if SVIDEO_SPSNR_NN
   Void    setSPSNREnabled(Bool b)                          { m_bSPSNREnabled = b; }
   Void    addSPSNR( Double spsnr[MAX_NUM_COMPONENT])       { m_SPSNRSum+=spsnr;   }

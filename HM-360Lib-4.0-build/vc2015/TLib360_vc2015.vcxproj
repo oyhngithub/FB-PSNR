@@ -158,8 +158,6 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\source\Lib\TLib360\fftw.cpp" />
-    <ClCompile Include="..\..\source\Lib\TLib360\GBVS.cpp" />
     <ClCompile Include="..\..\source\Lib\TLib360\TAdjustedCubeMap.cpp" />
     <ClCompile Include="..\..\source\Lib\TLib360\TAdjustedEqualArea.cpp" />
     <ClCompile Include="..\..\source\Lib\TLib360\TCPPPSNRMetricCalc.cpp" />
@@ -178,6 +176,7 @@
     <ClCompile Include="..\..\source\Lib\TLib360\TRotatedSphere.cpp" />
     <ClCompile Include="..\..\source\Lib\TLib360\TSegmentedSphere.cpp" />
     <ClCompile Include="..\..\source\Lib\TLib360\TSMPSNRMetricCalc.cpp" />
+    <ClCompile Include="..\..\source\Lib\TLib360\TSMPSNRVMetricCalc.cpp" />
     <ClCompile Include="..\..\source\Lib\TLib360\TSPSNRIMetricCalc.cpp" />
     <ClCompile Include="..\..\source\Lib\TLib360\TSPSNRMetricCalc.cpp" />
     <ClCompile Include="..\..\source\Lib\TLib360\TTsp.cpp" />
@@ -186,8 +185,6 @@
     <ClCompile Include="..\..\source\Lib\TLib360\TWSPSNRMetricCalc.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\source\Lib\TLib360\fftw.h" />
-    <ClInclude Include="..\..\source\Lib\TLib360\GBVS.h" />
     <ClInclude Include="..\..\source\Lib\TLib360\TAdjustedCubeMap.h" />
     <ClInclude Include="..\..\source\Lib\TLib360\TAdjustedEqualArea.h" />
     <ClInclude Include="..\..\source\Lib\TLib360\TCPPPSNRMetricCalc.h" />
@@ -206,6 +203,7 @@
     <ClInclude Include="..\..\source\Lib\TLib360\TRotatedSphere.h" />
     <ClInclude Include="..\..\source\Lib\TLib360\TSegmentedSphere.h" />
     <ClInclude Include="..\..\source\Lib\TLib360\TSMPSNRMetricCalc.h" />
+    <ClInclude Include="..\..\source\Lib\TLib360\TSMPSNRVMetricCalc.h" />
     <ClInclude Include="..\..\source\Lib\TLib360\TSPSNRIMetricCalc.h" />
     <ClInclude Include="..\..\source\Lib\TLib360\TSPSNRMetricCalc.h" />
     <ClInclude Include="..\..\source\Lib\TLib360\TTsp.h" />

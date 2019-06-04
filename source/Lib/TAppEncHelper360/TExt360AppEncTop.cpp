@@ -168,8 +168,14 @@ Void TExt360AppEncTop::xCreate(TEncGOP &encGop, TComPicYuv &yuvOrig)
       m_ext360EncGop.getDynamicViewPortPSNRMetric()->initDynamicViewPort(extCfg.m_sourceSVideoInfo, extCfg.m_codingSVideoInfo, &extCfg.m_inputGeoParam, extCfg.m_dynamicViewPortPSNRParam, cfg.m_FrameSkip, cfg.m_temporalSubsampleRatio);
     }
 #endif
+	m_ext360EncGop.getSMPSNRMetric()->setSMPSNREnabledFlag(extCfg.m_bSMPSNREnabled);
 	m_ext360EncGop.getSMPSNRMetric()->setOutputBitDepth(cfg.m_internalBitDepth);
 	m_ext360EncGop.getSMPSNRMetric()->setReferenceBitDepth(cfg.m_internalBitDepth);
+
+	m_ext360EncGop.getSMPSNRVMetric()->setSMPSNRVEnabledFlag(extCfg.m_bSMPSNRVEnabled);
+	m_ext360EncGop.getSMPSNRVMetric()->setOutputBitDepth(cfg.m_internalBitDepth);
+	m_ext360EncGop.getSMPSNRVMetric()->setReferenceBitDepth(cfg.m_internalBitDepth);
+
 	//m_ext360EncGop.getSMPSNRMetric()->sphSampoints(extCfg.m_sphFilename);
 //#if SVIDEO_E2E_METRICS
 //	m_ext360EncGop.getSMPSNRMetric()->createTable(m_pcInputGeomtry);
