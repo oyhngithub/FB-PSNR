@@ -7,10 +7,14 @@ public:
 	Bool      m_bSMPSNREnabled;
 	Double    m_dSMPSNR[3];
 
-	// change Cart2D to Cart3D for storing response
+	// m_response stores response wseight
+	CPos3D*   m_response;
+	// m_pCart3D stores radius weights
 	CPos3D*   m_pCart3D;
 	IPos2D*   m_fpTable;
+	IPos2D*   m_ffTable;
 	Int       m_iSphNumPoints;
+	Int       m_iFeaturePoints;
 
 	Int       m_outputBitDepth[MAX_NUM_CHANNEL_TYPE];         ///< bit-depth of output file
 	Int       m_referenceBitDepth[MAX_NUM_CHANNEL_TYPE];      ///< bit-depth of reference file
@@ -26,6 +30,7 @@ public:
 	Void    setReferenceBitDepth(Int iReferenceBitDepth[MAX_NUM_CHANNEL_TYPE]);
 	Double* getSMPSNR() { return m_dSMPSNR; }
 	Void    sphSampoints(const std::string &cSphDataFile);
+	Void    sphSampoints(const std::string &cSphDataFile, const std::string &);
 	Void    sphToCart(CPos2D*, CPos3D*);
 	Void    createTable(TGeometry *pcCodingGeomtry);
 	Void    xCalculateSMPSNR(TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPicD);

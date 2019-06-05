@@ -1161,102 +1161,12 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
 
   for ( Int iGOPid=0; iGOPid < m_iGopSize; iGOPid++ )
   {
+	  std::cout <<"--------id:" << iGOPid << "size:" << m_iGopSize<<std::endl;
+
     if (m_pcCfg->getEfficientFieldIRAPEnabled())
     {
       iGOPid=effFieldIRAPMap.adjustGOPid(iGOPid);
     }
-	//TODO
-	++GlobalTApp::frameCnt;
-	if (GlobalTApp::frameCnt == 29) {
-		cout << "Hello BUG!";
-	}
-	int currentFrame = GlobalTApp::offset + iGOPid;
-	std::string fileName = TExt360AppEncCfg::m_featureFileName + "_" + std::to_string(currentFrame) + ".txt";
-	// read feature
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRMetric.sphSampoints(fileName);
-	// create table
-#if SVIDEO_E2E_METRICS
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRMetric.createTable((GlobalTApp::getTApp())->ext360->m_pcInputGeomtry);
-#else
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRMetric.createTable((GlobalTApp::getTApp())->ext360->m_pcCodingGeomtry);
-#endif
-
-	//init SMPSNRV with SMPSNR
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_pCart3D = 
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRMetric.m_pCart3D;
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_fpTable =
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRMetric.m_fpTable;
-	//init SMPSNRV with WSPSNR
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_fErpWeight_Y =
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cWSPSNRMetric.m_fErpWeight_Y;
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_fErpWeight_C =
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cWSPSNRMetric.m_fErpWeight_C;
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_fCubeWeight_Y =
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cWSPSNRMetric.m_fCubeWeight_Y;
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_fCubeWeight_C =
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cWSPSNRMetric.m_fCubeWeight_C;
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_fEapWeight_Y =
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cWSPSNRMetric.m_fEapWeight_Y;
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_fEapWeight_C =
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cWSPSNRMetric.m_fEapWeight_C;
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_fOctaWeight_Y =
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cWSPSNRMetric.m_fOctaWeight_Y;
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_fOctaWeight_C =
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cWSPSNRMetric.m_fOctaWeight_C;
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_fIcoWeight_Y =
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cWSPSNRMetric.m_fIcoWeight_Y;
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_fIcoWeight_C =
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cWSPSNRMetric.m_fIcoWeight_C;
-
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_iCodingFaceWidth =
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cWSPSNRMetric.m_iCodingFaceWidth;
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_iCodingFaceHeight =
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cWSPSNRMetric.m_iCodingFaceHeight;
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_iChromaSampleLocType =
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cWSPSNRMetric.m_iChromaSampleLocType;
-
-#if SVIDEO_ERP_PADDING
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_bPERP =
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cWSPSNRMetric.m_bPERP;
-#endif
-#if SVIDEO_WSPSNR_E2E
-	//for E2E WS-PSNR calculation;
-#if !SVIDEO_E2E_METRICS
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_pcTVideoIOYuvInputFile =
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cWSPSNRMetric.m_pcTVideoIOYuvInputFile;
-
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_pRefGeometry =
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cWSPSNRMetric.m_pRefGeometry;
-
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_pRecGeometry =
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cWSPSNRMetric.m_pRecGeometry;
-
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_pcOrgPicYuv =
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cWSPSNRMetric.m_pcOrgPicYuv;
-
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_pcRecPicYuv =
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cWSPSNRMetric.m_pcRecPicYuv;
-#endif
-#if !SVIDEO_E2E_METRICS
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_iLastFrmPOC =
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cWSPSNRMetric.m_iLastFrmPOC;
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_temporalSubsampleRatio =
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cWSPSNRMetric.m_temporalSubsampleRatio;
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_iInputWidth =
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cWSPSNRMetric.m_iInputWidth;
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_iInputHeight =
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cWSPSNRMetric.m_iInputHeight;
-	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRVMetric.m_inputChromaFomat =
-		(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cWSPSNRMetric.m_inputChromaFomat;
-#endif
-#endif
-
-
-
-	if (iGOPid == m_iGopSize - 1) {
-		GlobalTApp::offset += m_iGopSize;
-	}
-
     //-- For time output for each slice
     clock_t iBeforeTime = clock();
 
@@ -1939,7 +1849,27 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
     }
 
     m_pcCfg->setEncodedFlag(iGOPid, true);
+	//TODO
+	++GlobalTApp::frameCnt;
+	if (GlobalTApp::frameCnt == 29) {
+		cout << "Hello BUG!";
+	}
+	int currentFrame = GlobalTApp::offset + iGOPid;
+	std::string fileName = TExt360AppEncCfg::m_featureFileName + "_" + std::to_string(currentFrame) + ".txt";
+	std::string responseFileName = TExt360AppEncCfg::m_featureFileName + "_response_" + std::to_string(currentFrame) + ".txt";
+	// read feature
+	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRMetric.sphSampoints(fileName, responseFileName);
+	// create table
+#if SVIDEO_E2E_METRICS
+	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRMetric.createTable((GlobalTApp::getTApp())->ext360->m_pcInputGeomtry);
+#else
+	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRMetric.createTable((GlobalTApp::getTApp())->ext360->m_pcCodingGeomtry);
+#endif
 
+	if (iGOPid == m_iGopSize - 1) {
+		GlobalTApp::offset += m_iGopSize;
+		cout << "-----m_iGopSize:" << m_iGopSize << endl;
+	}
     Double PSNR_Y;
 #if JVET_F0064_MSSSIM
     xCalculateAddPSNRs( isField, isTff, iGOPid, pcPic, accessUnit, rcListPic, dEncTime, snr_conversion, printFrameMSE, printMSSSIM, &PSNR_Y );

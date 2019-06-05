@@ -16,6 +16,7 @@ TSMPSNRVMetric::TSMPSNRVMetric()
 	: m_bSMPSNRVEnabled(false)
 	, m_pCart3D(NULL)
 	, m_fpTable(NULL)
+	, m_response(NULL)
 {
 	m_dSMPSNRV[0] = m_dSMPSNRV[1] = m_dSMPSNRV[2] = 0;
 }
@@ -30,6 +31,10 @@ TSMPSNRVMetric::~TSMPSNRVMetric()
 	if (m_fpTable)
 	{
 		free(m_fpTable); m_fpTable = NULL;
+	}
+	if (m_response)
+	{
+		free(m_response); m_response = NULL;
 	}
 }
 
@@ -163,8 +168,10 @@ Void TSMPSNRVMetric::xCalculateSMPSNRV(TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPi
 	Double w1Weight[3] = { 0, 0 ,0 };
 	Double w1PSNR[3] = { 0, 0 ,0 };
 	Double w2[3] = { 0, 0 ,0 };
+	Double w2Weight[3] = { 0, 0 ,0 };
 	Double w2PSNR[3] = { 0, 0 ,0 };
 	Double w3[3] = { 0, 0 ,0 };
+	Double w3Weight[3] = { 0, 0 ,0 };
 	Double w3PSNR[3] = { 0, 0 ,0 };
 
 	// calculate w1
@@ -365,23 +372,99 @@ Void TSMPSNRVMetric::xCalculateSMPSNRV(TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPi
 		const ComponentID ch = ComponentID(ch_indx);
 		const Int maxval = 255 << (iBitDepthForPSNRCalc[toChannelType(ch)] - 8);
 
-		Double fReflpsnr = Double(iNumPoints)*maxval*maxval;
+		Double fReflpsnr = 1.0 *maxval*maxval;
+
 		w1PSNR[ch_indx] = (w1[ch_indx] ? 10.0 * log10(w1Weight[ch_indx] * fReflpsnr / (Double)w1[ch_indx]) : 999.99);
 	}
 	// calculate w2
+	//for (Int chan = 0; chan < pcPicD->getNumberValidComponents(); chan++)
+	//{
+	//	const ComponentID ch = ComponentID(chan);
+	//	const Pel*  pOrg = pcOrgPicYuv->getAddr(ch);
+	//	const Int   iOrgStride = pcOrgPicYuv->getStride(ch);
+	//	const Pel*  pRec = picd.getAddr(ch);
+	//	const Int   iRecStride = picd.getStride(ch);
 
+	//	const Int   iWidth = pcPicD->getWidth(ch);
+	//	const Int   iHeight = pcPicD->getHeight(ch);
 
-	// calculate 3 path individualy
-	for (Int ch_indx = 0; ch_indx < pcPicD->getNumberValidComponents(); ch_indx++)
-	{
-		const ComponentID ch = ComponentID(ch_indx);
-		const Int maxval = 255 << (iBitDepthForPSNRCalc[toChannelType(ch)] - 8);
+	//	for (Int np = 0; np < m_iFeaturePoints; np++)
+	//	{
+	//		Int x_loc;
+	//		Int y_loc;
+	//		if (!chan)
+	//		{
+	//			x_loc = (Int)(m_ffTable[np].x);
+	//			y_loc = (Int)(m_ffTable[np].y);
+	//		}
+	//		else
+	//		{
+	//			x_loc = Int(m_ffTable[np].x >> pcPicD->getComponentScaleX(COMPONENT_Cb));
+	//			y_loc = Int(m_ffTable[np].y >> pcPicD->getComponentScaleY(COMPONENT_Cb));
+	//		}
 
-		Double fReflpsnr = Double(iNumPoints)*maxval*maxval;
-		w2[ch_indx] = (w2[ch_indx] ? 10.0 * log10(fReflpsnr / (Double)w2[ch_indx]) : 999.99);
-	}
+	//		int x, y;
+	//		x = x_loc;
+	//		y = y_loc;
+
+	//		
+	//		if (((pOrg + y * iOrgStride)[x]) > 255 || ((pOrg + y * iOrgStride)[x]) < 0 || ((pRec + y * iRecStride)[x]) > 255 || ((pRec + y * iRecStride)[x]) < 0)
+	//			printf("x:%d ,y:%d\norg:%d, rec:%d\n", x, y, (pOrg + y * iOrgStride)[x], (pRec + y * iRecStride)[x]);
+	//		//int test = iReferenceBitShift[toChannelType(ch)];
+	//		int org = ((pOrg + y * iOrgStride)[x]);
+	//		int rec = ((pRec + y * iRecStride)[x]);
+	//		//int refShift = iReferenceBitShift[toChannelType(ch)];
+	//		//int outputShift = iOutputBitShift[toChannelType(ch)];
+	//		Intermediate_Int iDiff = (Intermediate_Int)((((pOrg + y * iOrgStride)[x]) << iReferenceBitShift[toChannelType(ch)]) - (((pRec + y * iRecStride)[x]) << iOutputBitShift[toChannelType(ch)]));
+	//		//Intermediate_Int iDiff = (Intermediate_Int)((pOrg[x] << iReferenceBitShift[toChannelType(ch)]) - (pRec[x] << iOutputBitShift[toChannelType(ch)]));
+	//		if (m_response[np].z > 0)
+	//			w2Weight[chan] += m_response[np].z;
+	//		assert(iDiff <= 255);
+	//		w2[chan] += iDiff * iDiff*m_response[np].z;
+	//	}
+	//}
+
+	//// calculate 3 path individualy
+	//for (Int ch_indx = 0; ch_indx < pcPicD->getNumberValidComponents(); ch_indx++)
+	//{
+	//	const ComponentID ch = ComponentID(ch_indx);
+	//	const Int maxval = 255 << (iBitDepthForPSNRCalc[toChannelType(ch)] - 8);
+
+	//	Double fReflpsnr = Double(iNumPoints)*maxval*maxval;
+	//	w2PSNR[ch_indx] = (w2[ch_indx] ? 10.0 * log10(w2Weight[ch_indx] * fReflpsnr / (Double)w2[ch_indx]) : 999.99);
+	//}
 
 	// calculate w3
+	for (Int chan = 0; chan < pcPicD->getNumberValidComponents(); chan++)
+	{
+		const ComponentID ch = ComponentID(chan);
+		const Pel*  pOrg = pcOrgPicYuv->getAddr(ch);
+		const Int   iOrgStride = pcOrgPicYuv->getStride(ch);
+		const Pel*  pRec = picd.getAddr(ch);
+		const Int   iRecStride = picd.getStride(ch);
+
+		for (Int np = 0; np < m_iSphNumPoints; np++)
+		{
+			Int fWeight = (Int)(m_pCart3D[np].z);
+			Int x_loc;
+			Int y_loc;
+			if (!chan)
+			{
+				x_loc = (Int)(m_fpTable[np].x);
+				y_loc = (Int)(m_fpTable[np].y);
+			}
+			else
+			{
+				x_loc = Int(m_fpTable[np].x >> pcPicD->getComponentScaleX(COMPONENT_Cb));
+				y_loc = Int(m_fpTable[np].y >> pcPicD->getComponentScaleY(COMPONENT_Cb));
+			}
+			Intermediate_Int iDifflp = (pOrg[x_loc + (y_loc*iOrgStride)] << iReferenceBitShift[toChannelType(ch)]) - (pRec[x_loc + (y_loc*iRecStride)] << iOutputBitShift[toChannelType(ch)]);
+			if (fWeight > 0)
+				w3Weight[chan] += fWeight;
+			assert(iDifflp <= 255);
+			w3[chan] += iDifflp * iDifflp*fWeight;
+		}
+	}
 
 	// calculate 3 path individualy
 	for (Int ch_indx = 0; ch_indx < pcPicD->getNumberValidComponents(); ch_indx++)
@@ -389,10 +472,20 @@ Void TSMPSNRVMetric::xCalculateSMPSNRV(TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPi
 		const ComponentID ch = ComponentID(ch_indx);
 		const Int maxval = 255 << (iBitDepthForPSNRCalc[toChannelType(ch)] - 8);
 
-		Double fReflpsnr = Double(iNumPoints)*maxval*maxval;
-		w3[ch_indx] = (w3[ch_indx] ? 10.0 * log10(fReflpsnr / (Double)w3[ch_indx]) : 999.99);
+		Double fReflpsnr = 1.0 * w3Weight[ch_indx] * maxval*maxval;
+		w3PSNR[ch_indx] = (w3Weight[ch_indx] ? 10.0 * log10(fReflpsnr / (Double)w3[ch_indx]) : 999.99);
 	}
 
+	// add result
+	for (Int ch_indx = 0; ch_indx < pcPicD->getNumberValidComponents(); ch_indx++)
+	{
+		m_dSMPSNRV[ch_indx] = (w1PSNR[ch_indx] + w3PSNR[ch_indx]) / 2;
+	}
+	
+
+	/*for (int i = 0; i < 3; ++i) {
+		std::cout << w1PSNR[i] << ", " << w2PSNR[i] << ", " << w3PSNR[i];
+	}*/
 }
 
 // create 2D table 

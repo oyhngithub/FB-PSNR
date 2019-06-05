@@ -7,10 +7,14 @@ public:
 	Bool      m_bSMPSNRVEnabled;
 	Double    m_dSMPSNRV[3];
 
-	// change Cart2D to Cart3D for storing response
+	// m_response stores response wseight
+	CPos3D*   m_response;
+	// m_pCart3D stores radius weights
 	CPos3D*   m_pCart3D;
 	IPos2D*   m_fpTable;
+	IPos2D*   m_ffTable;
 	Int       m_iSphNumPoints;
+	Int       m_iFeaturePoints;
 
 	Int       m_outputBitDepth[MAX_NUM_CHANNEL_TYPE];         ///< bit-depth of output file
 	Int       m_referenceBitDepth[MAX_NUM_CHANNEL_TYPE];      ///< bit-depth of reference file
