@@ -1161,7 +1161,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
 
   for ( Int iGOPid=0; iGOPid < m_iGopSize; iGOPid++ )
   {
-	  std::cout <<"--------id:" << iGOPid << "size:" << m_iGopSize<<std::endl;
 
     if (m_pcCfg->getEfficientFieldIRAPEnabled())
     {
@@ -1851,12 +1850,12 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
     m_pcCfg->setEncodedFlag(iGOPid, true);
 	//TODO
 	++GlobalTApp::frameCnt;
-	if (GlobalTApp::frameCnt == 29) {
+	/*if (GlobalTApp::frameCnt == 29) {
 		cout << "Hello BUG!";
-	}
+	}*/
 	int currentFrame = GlobalTApp::offset + iGOPid;
-	std::string fileName = TExt360AppEncCfg::m_featureFileName + "_" + std::to_string(currentFrame) + ".txt";
-	std::string responseFileName = TExt360AppEncCfg::m_featureFileName + "_response_" + std::to_string(currentFrame) + ".txt";
+	std::string fileName = TExt360AppEncCfg::m_featureFileName + "_" + std::to_string(pcPic->getSlice(0)->getPOC()) + ".txt";
+	std::string responseFileName = TExt360AppEncCfg::m_featureFileName + "_response_" + std::to_string(pcPic->getSlice(0)->getPOC()) + ".txt";
 	// read feature
 	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRMetric.sphSampoints(fileName, responseFileName);
 	// create table
@@ -1868,7 +1867,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
 
 	if (iGOPid == m_iGopSize - 1) {
 		GlobalTApp::offset += m_iGopSize;
-		cout << "-----m_iGopSize:" << m_iGopSize << endl;
+		//cout << "-----m_iGopSize:" << m_iGopSize << endl;
 	}
     Double PSNR_Y;
 #if JVET_F0064_MSSSIM

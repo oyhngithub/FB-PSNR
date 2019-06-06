@@ -29,7 +29,7 @@ public:
 	Void    setOutputBitDepth(Int iOutputBitDepth[MAX_NUM_CHANNEL_TYPE]);
 	Void    setReferenceBitDepth(Int iReferenceBitDepth[MAX_NUM_CHANNEL_TYPE]);
 	Double* getSMPSNR() { return m_dSMPSNR; }
-	Void    sphSampoints(const std::string &cSphDataFile);
+	//Void    sphSampoints(const std::string &cSphDataFile);
 	Void    sphSampoints(const std::string &cSphDataFile, const std::string &);
 	Void    sphToCart(CPos2D*, CPos3D*);
 	Void    createTable(TGeometry *pcCodingGeomtry);

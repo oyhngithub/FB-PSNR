@@ -79,6 +79,33 @@ TExt360EncGop::~TExt360EncGop()
 Void TExt360EncGop::calculatePSNRs(TComPic *pcPic)
 {
 	getSMPSNRMetric()->xCalculateSMPSNR(pcPic->getPicYuvOrg(), pcPic->getPicYuvRec());
+	//init SMPSNRV with SMPSNR
+	m_cSMPSNRVMetric.m_pCart3D = m_cSMPSNRMetric.m_pCart3D;
+	m_cSMPSNRVMetric.m_response = m_cSMPSNRMetric.m_response;
+	m_cSMPSNRVMetric.m_fpTable = m_cSMPSNRMetric.m_fpTable;
+	m_cSMPSNRVMetric.m_ffTable = m_cSMPSNRMetric.m_ffTable;
+	m_cSMPSNRVMetric.m_iFeaturePoints = m_cSMPSNRMetric.m_iFeaturePoints;
+	m_cSMPSNRVMetric.m_iSphNumPoints = m_cSMPSNRMetric.m_iSphNumPoints;
+
+
+	//init SMPSNRV with WSPSNR
+	m_cSMPSNRVMetric.m_fErpWeight_Y = m_cWSPSNRMetric.m_fErpWeight_Y;
+	m_cSMPSNRVMetric.m_fErpWeight_C = m_cWSPSNRMetric.m_fErpWeight_C;
+	m_cSMPSNRVMetric.m_fCubeWeight_Y = m_cWSPSNRMetric.m_fCubeWeight_Y;
+	m_cSMPSNRVMetric.m_fCubeWeight_C = m_cWSPSNRMetric.m_fCubeWeight_C;
+	m_cSMPSNRVMetric.m_fEapWeight_Y = m_cWSPSNRMetric.m_fEapWeight_Y;
+	m_cSMPSNRVMetric.m_fEapWeight_C = m_cWSPSNRMetric.m_fEapWeight_C;
+	m_cSMPSNRVMetric.m_fOctaWeight_Y = m_cWSPSNRMetric.m_fOctaWeight_Y;
+	m_cSMPSNRVMetric.m_fOctaWeight_C = m_cWSPSNRMetric.m_fOctaWeight_C;
+	m_cSMPSNRVMetric.m_fIcoWeight_Y = m_cWSPSNRMetric.m_fIcoWeight_Y;
+	m_cSMPSNRVMetric.m_fIcoWeight_C = m_cWSPSNRMetric.m_fIcoWeight_C;
+
+	m_cSMPSNRVMetric.m_iCodingFaceWidth = m_cWSPSNRMetric.m_iCodingFaceWidth;
+	m_cSMPSNRVMetric.m_iCodingFaceHeight = m_cWSPSNRMetric.m_iCodingFaceHeight;
+	m_cSMPSNRVMetric.m_iChromaSampleLocType = m_cWSPSNRMetric.m_iChromaSampleLocType;
+
+	getSMPSNRVMetric()->xCalculateSMPSNRV(pcPic->getPicYuvOrg(), pcPic->getPicYuvRec());
+
 #if SVIDEO_E2E_METRICS
   readOrigPicYuv(pcPic->getPOC());
   reconstructPicYuv(pcPic->getPicYuvRec());
@@ -118,57 +145,7 @@ Void TExt360EncGop::calculatePSNRs(TComPic *pcPic)
 #endif
   }
 #endif
-  	//init SMPSNRV with SMPSNR
-	 m_cSMPSNRVMetric.m_pCart3D = m_cSMPSNRMetric.m_pCart3D;
-	 m_cSMPSNRVMetric.m_response = m_cSMPSNRMetric.m_response;
-	 m_cSMPSNRVMetric.m_fpTable =  m_cSMPSNRMetric.m_fpTable;
-	 m_cSMPSNRVMetric.m_ffTable =  m_cSMPSNRMetric.m_ffTable;
-	 m_cSMPSNRVMetric.m_iFeaturePoints = m_cSMPSNRMetric.m_iFeaturePoints;
-	 m_cSMPSNRVMetric.m_iSphNumPoints = m_cSMPSNRMetric.m_iSphNumPoints;
-
-
-	//init SMPSNRV with WSPSNR
-	 m_cSMPSNRVMetric.m_fErpWeight_Y = m_cWSPSNRMetric.m_fErpWeight_Y;
-	 m_cSMPSNRVMetric.m_fErpWeight_C = m_cWSPSNRMetric.m_fErpWeight_C;
-	 m_cSMPSNRVMetric.m_fCubeWeight_Y = m_cWSPSNRMetric.m_fCubeWeight_Y;
-	 m_cSMPSNRVMetric.m_fCubeWeight_C = m_cWSPSNRMetric.m_fCubeWeight_C;
-	 m_cSMPSNRVMetric.m_fEapWeight_Y = m_cWSPSNRMetric.m_fEapWeight_Y;
-	 m_cSMPSNRVMetric.m_fEapWeight_C = m_cWSPSNRMetric.m_fEapWeight_C;
-	 m_cSMPSNRVMetric.m_fOctaWeight_Y = m_cWSPSNRMetric.m_fOctaWeight_Y;
-	 m_cSMPSNRVMetric.m_fOctaWeight_C = m_cWSPSNRMetric.m_fOctaWeight_C;
-	 m_cSMPSNRVMetric.m_fIcoWeight_Y = m_cWSPSNRMetric.m_fIcoWeight_Y;
-	 m_cSMPSNRVMetric.m_fIcoWeight_C = m_cWSPSNRMetric.m_fIcoWeight_C;
-
-	 m_cSMPSNRVMetric.m_iCodingFaceWidth = m_cWSPSNRMetric.m_iCodingFaceWidth;
-	 m_cSMPSNRVMetric.m_iCodingFaceHeight = m_cWSPSNRMetric.m_iCodingFaceHeight;
-	 m_cSMPSNRVMetric.m_iChromaSampleLocType = m_cWSPSNRMetric.m_iChromaSampleLocType;
-
-#if SVIDEO_ERP_PADDING
-	 m_cSMPSNRVMetric.m_bPERP = m_cWSPSNRMetric.m_bPERP;
-#endif
-#if SVIDEO_WSPSNR_E2E
-	//for E2E WS-PSNR calculation;
-#if !SVIDEO_E2E_METRICS
-	 m_cSMPSNRVMetric.m_pcTVideoIOYuvInputFile = m_cWSPSNRMetric.m_pcTVideoIOYuvInputFile;
-
-	 m_cSMPSNRVMetric.m_pRefGeometry = m_cWSPSNRMetric.m_pRefGeometry;
-
-	 m_cSMPSNRVMetric.m_pRecGeometry = m_cWSPSNRMetric.m_pRecGeometry;
-
-	 m_cSMPSNRVMetric.m_pcOrgPicYuv = m_cWSPSNRMetric.m_pcOrgPicYuv;
-
-	 m_cSMPSNRVMetric.m_pcRecPicYuv = m_cWSPSNRMetric.m_pcRecPicYuv;
-#endif
-#if !SVIDEO_E2E_METRICS
-	 m_cSMPSNRVMetric.m_iLastFrmPOC = m_cWSPSNRMetric.m_iLastFrmPOC;
-	 m_cSMPSNRVMetric.m_temporalSubsampleRatio = m_cWSPSNRMetric.m_temporalSubsampleRatio;
-	 m_cSMPSNRVMetric.m_iInputWidth = m_cWSPSNRMetric.m_iInputWidth;
-	 m_cSMPSNRVMetric.m_iInputHeight = m_cWSPSNRMetric.m_iInputHeight;
-	 m_cSMPSNRVMetric.m_inputChromaFomat = m_cWSPSNRMetric.m_inputChromaFomat;
-#endif
-#endif
-	 // calculate SM-PSNRV
-	 getSMPSNRVMetric()->xCalculateSMPSNRV(pcPic->getPicYuvOrg(), pcPic->getPicYuvRec());
+  	
 
 
 #endif

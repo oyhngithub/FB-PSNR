@@ -58,32 +58,32 @@ Void TSMPSNRMetric::setReferenceBitDepth(Int iReferenceBitDepth[MAX_NUM_CHANNEL_
 }
 
 // get sphere points    TODO
-Void TSMPSNRMetric::sphSampoints(const std::string &cSphDataFile)
-{
-	FILE* fp = fopen(cSphDataFile.c_str(), "r");
-	int x, y;
-	x = y = 0;
-	// read longtitude, latitude
-	if (fscanf(fp, "%d", &m_iSphNumPoints) != 1)
-	{
-		printf("SphData file does not exist.\n");
-		exit(EXIT_FAILURE);
-		fclose(fp);
-	}
-
-	m_pCart3D = (CPos3D*)malloc(sizeof(CPos3D)*(m_iSphNumPoints));
-	memset(m_pCart3D, 0, (sizeof(CPos3D) * m_iSphNumPoints));
-	for (Int z = 0; z < m_iSphNumPoints; z++)
-	{
-		// Reading from latitude,longtitude
-		if (fscanf(fp, "%lf %lf %lf", &m_pCart3D[z].y, &m_pCart3D[z].x, &m_pCart3D[z].z) != 3)
-		{
-			printf("Format error SphData in sphSampoints().\n");
-			exit(EXIT_FAILURE);
-		}
-	}
-	fclose(fp);
-}
+//Void TSMPSNRMetric::sphSampoints(const std::string &cSphDataFile)
+//{
+//	FILE* fp = fopen(cSphDataFile.c_str(), "r");
+//	int x, y;
+//	x = y = 0;
+//	// read longtitude, latitude
+//	if (fscanf(fp, "%d", &m_iSphNumPoints) != 1)
+//	{
+//		printf("SphData file does not exist.\n");
+//		exit(EXIT_FAILURE);
+//		fclose(fp);
+//	}
+//
+//	m_pCart3D = (CPos3D*)malloc(sizeof(CPos3D)*(m_iSphNumPoints));
+//	memset(m_pCart3D, 0, (sizeof(CPos3D) * m_iSphNumPoints));
+//	for (Int z = 0; z < m_iSphNumPoints; z++)
+//	{
+//		// Reading from latitude,longtitude
+//		if (fscanf(fp, "%lf %lf %lf", &m_pCart3D[z].y, &m_pCart3D[z].x, &m_pCart3D[z].z) != 3)
+//		{
+//			printf("Format error SphData in sphSampoints().\n");
+//			exit(EXIT_FAILURE);
+//		}
+//	}
+//	fclose(fp);
+//}
 
 Void TSMPSNRMetric::sphSampoints(const std::string &cSphDataFile, const std::string &responseFile)
 {
@@ -119,7 +119,7 @@ Void TSMPSNRMetric::sphSampoints(const std::string &cSphDataFile, const std::str
 	}
 
 	m_response = (CPos3D*)malloc(sizeof(CPos3D)*(m_iFeaturePoints));
-	memset(m_pCart3D, 0, (sizeof(CPos3D) * m_iFeaturePoints));
+	memset(m_response, 0, (sizeof(CPos3D) * m_iFeaturePoints));
 	for (Int z = 0; z < m_iFeaturePoints; z++)
 	{
 		// Reading from latitude,longtitude

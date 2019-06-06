@@ -221,14 +221,16 @@ Void TSMPSNRVMetric::xCalculateSMPSNRV(TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPi
 						fWeight = m_fErpWeight_C[y];
 					}
 				}
-				if (((pOrg + y * iOrgStride)[x]) > 255 || ((pOrg + y * iOrgStride)[x]) < 0 || ((pRec + y * iRecStride)[x]) > 255 || ((pRec + y * iRecStride)[x]) < 0)
-					printf("x:%d ,y:%d\norg:%d, rec:%d\n", x, y, (pOrg + y * iOrgStride)[x], (pRec + y * iRecStride)[x]);
+				//if (((pOrg + y * iOrgStride)[x]) > 255 || ((pOrg + y * iOrgStride)[x]) < 0 || ((pRec + y * iRecStride)[x]) > 255 || ((pRec + y * iRecStride)[x]) < 0)
+				//	printf("x:%d ,y:%d\norg:%d, rec:%d\n", x, y, (pOrg + y * iOrgStride)[x], (pRec + y * iRecStride)[x]);
 				//int test = iReferenceBitShift[toChannelType(ch)];
+				assert(y < iHeight && x < iWidth);
+
 				int org = ((pOrg + y * iOrgStride)[x]);
 				int rec = ((pRec + y * iRecStride)[x]);
 				//int refShift = iReferenceBitShift[toChannelType(ch)];
 				//int outputShift = iOutputBitShift[toChannelType(ch)];
-				Intermediate_Int iDiff = (Intermediate_Int)((((pOrg + y * iOrgStride)[x]) << iReferenceBitShift[toChannelType(ch)]) - (((pRec + y * iRecStride)[x]) << iOutputBitShift[toChannelType(ch)]));
+				Intermediate_Int iDiff = (Intermediate_Int)((org << iReferenceBitShift[toChannelType(ch)]) - (rec << iOutputBitShift[toChannelType(ch)]));
 				//Intermediate_Int iDiff = (Intermediate_Int)((pOrg[x] << iReferenceBitShift[toChannelType(ch)]) - (pRec[x] << iOutputBitShift[toChannelType(ch)]));
 
 				if ((m_codingGeoType == SVIDEO_CUBEMAP)
@@ -445,7 +447,7 @@ Void TSMPSNRVMetric::xCalculateSMPSNRV(TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPi
 
 		for (Int np = 0; np < m_iSphNumPoints; np++)
 		{
-			Int fWeight = (Int)(m_pCart3D[np].z);
+			Double fWeight = m_pCart3D[np].z;
 			Int x_loc;
 			Int y_loc;
 			if (!chan)
