@@ -10,6 +10,8 @@ public:
 	// m_response stores response wseight
 	CPos3D*   m_response;
 	// m_pCart3D stores radius weights
+	Double    m_min;
+	Double	  m_max;
 	CPos3D*   m_pCart3D;
 	IPos2D*   m_fpTable;
 	IPos2D*   m_ffTable;

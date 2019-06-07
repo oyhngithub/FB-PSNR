@@ -2479,7 +2479,8 @@ Void TWSPSNRMetric::xCalculateWSPSNR( TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPic
 #endif
         }
 #endif
-
+		min = min < fWeight ? min : fWeight;
+		max = max > fWeight ? max : fWeight;
         if(fWeight>0)
           fWeightSum += fWeight;
         SSDwpsnr   += iDiff * iDiff*fWeight;

@@ -98,6 +98,8 @@ Void TSMPSNRMetric::sphSampoints(const std::string &cSphDataFile, const std::str
 
 	m_pCart3D = (CPos3D*)malloc(sizeof(CPos3D)*(m_iSphNumPoints));
 	memset(m_pCart3D, 0, (sizeof(CPos3D) * m_iSphNumPoints));
+	double min = 1000000;
+	double max = 0;
 	for (Int z = 0; z < m_iSphNumPoints; z++)
 	{
 		// Reading from latitude,longtitude
@@ -106,6 +108,13 @@ Void TSMPSNRMetric::sphSampoints(const std::string &cSphDataFile, const std::str
 			printf("Format error SphData in sphSampoints().\n");
 			exit(EXIT_FAILURE);
 		}
+		min = min < m_pCart3D[z].z ? min : m_pCart3D[z].z;
+		max = max > m_pCart3D[z].z ? max : m_pCart3D[z].z;
+	}
+	double scaling = max - min;
+	for (Int z = 0; z < m_iSphNumPoints; z++)
+	{
+		m_pCart3D[z].z = (m_pCart3D[z].z - min) / scaling;
 	}
 	fclose(fp);
 

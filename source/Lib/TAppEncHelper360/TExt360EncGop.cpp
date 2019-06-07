@@ -104,7 +104,6 @@ Void TExt360EncGop::calculatePSNRs(TComPic *pcPic)
 	m_cSMPSNRVMetric.m_iCodingFaceHeight = m_cWSPSNRMetric.m_iCodingFaceHeight;
 	m_cSMPSNRVMetric.m_iChromaSampleLocType = m_cWSPSNRMetric.m_iChromaSampleLocType;
 
-	getSMPSNRVMetric()->xCalculateSMPSNRV(pcPic->getPicYuvOrg(), pcPic->getPicYuvRec());
 
 #if SVIDEO_E2E_METRICS
   readOrigPicYuv(pcPic->getPOC());
@@ -203,6 +202,9 @@ Void TExt360EncGop::calculatePSNRs(TComPic *pcPic)
     getCFCPPPSNRMetric()->xCalculateCPPPSNR(getOrigPicYuv(), pcPic->getPicYuvRec());
   }
 #endif
+  getSMPSNRVMetric()->m_min = getWSPSNRMetric()->min;
+  getSMPSNRVMetric()->m_max = getWSPSNRMetric()->max;
+  getSMPSNRVMetric()->xCalculateSMPSNRV(pcPic->getPicYuvOrg(), pcPic->getPicYuvRec());
 }
 
 

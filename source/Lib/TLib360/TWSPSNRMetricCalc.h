@@ -50,6 +50,7 @@ class TWSPSNRMetric
 public:
   Bool      m_bEnabled;
   Double    m_dWSPSNR[3];
+  double min, max;
   
   Int       m_outputBitDepth[MAX_NUM_CHANNEL_TYPE];         ///< bit-depth of output file
   Int       m_referenceBitDepth[MAX_NUM_CHANNEL_TYPE];      ///< bit-depth of reference file

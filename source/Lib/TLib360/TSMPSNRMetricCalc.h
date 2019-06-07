@@ -23,7 +23,7 @@ public:
 public:
 	TSMPSNRMetric();
 	~TSMPSNRMetric();
-
+	double min, max;
 	Bool    getSMPSNREnabled() { return m_bSMPSNREnabled; }
 	Void    setSMPSNREnabledFlag(Bool bEnabledFlag) { m_bSMPSNREnabled = bEnabledFlag; }
 	Void    setOutputBitDepth(Int iOutputBitDepth[MAX_NUM_CHANNEL_TYPE]);
