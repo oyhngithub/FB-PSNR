@@ -53,7 +53,6 @@
 using namespace std;
 
 
-#include "opencv2/opencv_modules.hpp"
 #include <cstdio>
 #include <iostream>
 #include <cstring>
