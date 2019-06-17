@@ -118,27 +118,27 @@ Void TSMPSNRMetric::sphSampoints(const std::string &cSphDataFile, const std::str
 	}
 	fclose(fp);
 
-	fp = fopen(responseFile.c_str(), "r");
-	// read longtitude, latitude
-	if (fscanf(fp, "%d", &m_iFeaturePoints) != 1)
-	{
-		printf("FeatureData file does not exist.\n");
-		exit(EXIT_FAILURE);
-		fclose(fp);
-	}
+	//fp = fopen(responseFile.c_str(), "r");
+	//// read longtitude, latitude
+	//if (fscanf(fp, "%d", &m_iFeaturePoints) != 1)
+	//{
+	//	printf("FeatureData file does not exist.\n");
+	//	exit(EXIT_FAILURE);
+	//	fclose(fp);
+	//}
 
-	m_response = (CPos3D*)malloc(sizeof(CPos3D)*(m_iFeaturePoints));
-	memset(m_response, 0, (sizeof(CPos3D) * m_iFeaturePoints));
-	for (Int z = 0; z < m_iFeaturePoints; z++)
-	{
-		// Reading from latitude,longtitude
-		if (fscanf(fp, "%lf %lf %lf", &m_response[z].y, &m_response[z].x, &m_response[z].z) != 3)
-		{
-			printf("Format error SphData in sphSampoints().\n");
-			exit(EXIT_FAILURE);
-		}
-	}
-	fclose(fp);
+	//m_response = (CPos3D*)malloc(sizeof(CPos3D)*(m_iFeaturePoints));
+	//memset(m_response, 0, (sizeof(CPos3D) * m_iFeaturePoints));
+	//for (Int z = 0; z < m_iFeaturePoints; z++)
+	//{
+	//	// Reading from latitude,longtitude
+	//	if (fscanf(fp, "%lf %lf %lf", &m_response[z].y, &m_response[z].x, &m_response[z].z) != 3)
+	//	{
+	//		printf("Format error SphData in sphSampoints().\n");
+	//		exit(EXIT_FAILURE);
+	//	}
+	//}
+	//fclose(fp);
 
 }
 
