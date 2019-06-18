@@ -95,7 +95,7 @@ Void TSMPSNRMetric::sphSampoints(const std::string &cSphDataFile, const std::str
 		exit(EXIT_FAILURE);
 		fclose(fp);
 	}
-
+	free(m_pCart3D);
 	m_pCart3D = (CPos3D*)malloc(sizeof(CPos3D)*(m_iSphNumPoints));
 	memset(m_pCart3D, 0, (sizeof(CPos3D) * m_iSphNumPoints));
 	double min = 1000000;
@@ -159,6 +159,8 @@ void TSMPSNRMetric::createTable(TGeometry *pcCodingGeomtry)
 	CPos2D In2d;
 	CPos3D Out3d;
 	SPos posIn, posOut;
+	free(m_fpTable);
+	free(m_ffTable);
 	m_fpTable = (IPos2D*)malloc(iNumPoints * sizeof(IPos2D));
 	m_ffTable = (IPos2D*)malloc(m_iFeaturePoints * sizeof(IPos2D));
 
