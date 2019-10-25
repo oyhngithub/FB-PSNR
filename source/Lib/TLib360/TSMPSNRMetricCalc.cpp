@@ -16,6 +16,7 @@ TSMPSNRMetric::TSMPSNRMetric()
 	: m_bSMPSNREnabled(false)
 	, m_pCart3D(NULL)
 	, m_fpTable(NULL)
+	, m_ffTable(NULL)
 	, m_response(NULL)
 {
 	m_dSMPSNR[0] = m_dSMPSNR[1] = m_dSMPSNR[2] = 0;
@@ -159,8 +160,10 @@ void TSMPSNRMetric::createTable(TGeometry *pcCodingGeomtry)
 	CPos2D In2d;
 	CPos3D Out3d;
 	SPos posIn, posOut;
-	free(m_fpTable);
-	free(m_ffTable);
+	if (m_fpTable != nullptr)
+		free(m_fpTable);
+	if (m_ffTable != nullptr)
+		free(m_ffTable);
 	m_fpTable = (IPos2D*)malloc(iNumPoints * sizeof(IPos2D));
 	m_ffTable = (IPos2D*)malloc(m_iFeaturePoints * sizeof(IPos2D));
 
@@ -184,6 +187,7 @@ void TSMPSNRMetric::createTable(TGeometry *pcCodingGeomtry)
 		pcCodingGeomtry->clamp(&tmpPos);
 		pcCodingGeomtry->geoToFramePack(&tmpPos, &m_fpTable[np]);
 	}
+	// NOT USED!
 	for (Int np = 0; np < m_iFeaturePoints; np++)
 	{
 		In2d.x = m_response[np].x;

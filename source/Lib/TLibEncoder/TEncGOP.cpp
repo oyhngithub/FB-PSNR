@@ -1852,8 +1852,9 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
 	/*if (GlobalTApp::frameCnt == 29) {
 		cout << "Hello BUG!";
 	}*/
-	int currentFrame = GlobalTApp::offset + iGOPid;
+	// int currentFrame = GlobalTApp::offset + iGOPid;
 	std::string fileName = TExt360AppEncCfg::m_featureFileName + "_" + std::to_string(pcPic->getSlice(0)->getPOC()) + ".txt";
+	// responseFile is deprecated, it is meaningless for now.(use for original fearure strength calculation)
 	std::string responseFileName = TExt360AppEncCfg::m_featureFileName + "_response_" + std::to_string(pcPic->getSlice(0)->getPOC()) + ".txt";
 	// read feature
 	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRMetric.sphSampoints(fileName, responseFileName);

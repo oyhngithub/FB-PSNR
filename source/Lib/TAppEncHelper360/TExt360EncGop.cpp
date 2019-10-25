@@ -78,7 +78,18 @@ TExt360EncGop::~TExt360EncGop()
 
 Void TExt360EncGop::calculatePSNRs(TComPic *pcPic)
 {
+
+#if SVIDEO_E2E_METRICS
+	readOrigPicYuv(pcPic->getPOC());
+	reconstructPicYuv(pcPic->getPicYuvRec());
+#endif
+
+
+#if SVIDEO_E2E_METRICS
+	getSMPSNRMetric()->xCalculateSMPSNR(getOrigPicYuv(), getRecPicYuv());
+#else
 	getSMPSNRMetric()->xCalculateSMPSNR(pcPic->getPicYuvOrg(), pcPic->getPicYuvRec());
+#endif
 	//init SMPSNRV with SMPSNR
 	m_cSMPSNRVMetric.m_pCart3D = m_cSMPSNRMetric.m_pCart3D;
 	m_cSMPSNRVMetric.m_response = m_cSMPSNRMetric.m_response;
@@ -106,10 +117,6 @@ Void TExt360EncGop::calculatePSNRs(TComPic *pcPic)
 	m_cSMPSNRVMetric.m_codingGeoType = m_cWSPSNRMetric.m_codingGeoType;
 
 
-#if SVIDEO_E2E_METRICS
-  readOrigPicYuv(pcPic->getPOC());
-  reconstructPicYuv(pcPic->getPicYuvRec());
-#endif
 #if SVIDEO_SPSNR_NN
   if(getSPSNRMetric()->getSPSNREnabled())
   {
@@ -205,7 +212,11 @@ Void TExt360EncGop::calculatePSNRs(TComPic *pcPic)
 #endif
   getSMPSNRVMetric()->m_min = getWSPSNRMetric()->min;
   getSMPSNRVMetric()->m_max = getWSPSNRMetric()->max;
+#if SVIDEO_E2E_METRICS
+  getSMPSNRVMetric()->xCalculateSMPSNRV(getOrigPicYuv(), getRecPicYuv());
+#else
   getSMPSNRVMetric()->xCalculateSMPSNRV(pcPic->getPicYuvOrg(), pcPic->getPicYuvRec());
+#endif
 }
 
 
