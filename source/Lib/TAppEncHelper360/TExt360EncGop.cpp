@@ -84,7 +84,6 @@ Void TExt360EncGop::calculatePSNRs(TComPic *pcPic)
 	reconstructPicYuv(pcPic->getPicYuvRec());
 #endif
 
-
 #if SVIDEO_E2E_METRICS
 	getSMPSNRMetric()->xCalculateSMPSNR(getOrigPicYuv(), getRecPicYuv());
 #else
@@ -99,6 +98,26 @@ Void TExt360EncGop::calculatePSNRs(TComPic *pcPic)
 	m_cSMPSNRVMetric.m_iSphNumPoints = m_cSMPSNRMetric.m_iSphNumPoints;
 
 
+	
+#if SVIDEO_E2E_METRICS
+	// for E2E RV-PSNR e.g. ROI-Variable-PSNR
+	m_cSMPSNRVMetric.m_fErpWeight_Y = m_cE2EWSPSNRMetric.m_fErpWeight_Y;
+	m_cSMPSNRVMetric.m_fErpWeight_C = m_cE2EWSPSNRMetric.m_fErpWeight_C;
+	m_cSMPSNRVMetric.m_fCubeWeight_Y = m_cE2EWSPSNRMetric.m_fCubeWeight_Y;
+	m_cSMPSNRVMetric.m_fCubeWeight_C = m_cE2EWSPSNRMetric.m_fCubeWeight_C;
+	m_cSMPSNRVMetric.m_fEapWeight_Y = m_cE2EWSPSNRMetric.m_fEapWeight_Y;
+	m_cSMPSNRVMetric.m_fEapWeight_C = m_cE2EWSPSNRMetric.m_fEapWeight_C;
+	m_cSMPSNRVMetric.m_fOctaWeight_Y = m_cE2EWSPSNRMetric.m_fOctaWeight_Y;
+	m_cSMPSNRVMetric.m_fOctaWeight_C = m_cE2EWSPSNRMetric.m_fOctaWeight_C;
+	m_cSMPSNRVMetric.m_fIcoWeight_Y = m_cE2EWSPSNRMetric.m_fIcoWeight_Y;
+	m_cSMPSNRVMetric.m_fIcoWeight_C = m_cE2EWSPSNRMetric.m_fIcoWeight_C;
+
+	m_cSMPSNRVMetric.m_iCodingFaceWidth = m_cE2EWSPSNRMetric.m_iCodingFaceWidth;
+	m_cSMPSNRVMetric.m_iCodingFaceHeight = m_cE2EWSPSNRMetric.m_iCodingFaceHeight;
+	m_cSMPSNRVMetric.m_iChromaSampleLocType = m_cE2EWSPSNRMetric.m_iChromaSampleLocType;
+	m_cSMPSNRVMetric.m_codingGeoType = m_cE2EWSPSNRMetric.m_codingGeoType;
+#else
+	//for codec calculation only!
 	//init SMPSNRV with WSPSNR
 	m_cSMPSNRVMetric.m_fErpWeight_Y = m_cWSPSNRMetric.m_fErpWeight_Y;
 	m_cSMPSNRVMetric.m_fErpWeight_C = m_cWSPSNRMetric.m_fErpWeight_C;
@@ -115,7 +134,7 @@ Void TExt360EncGop::calculatePSNRs(TComPic *pcPic)
 	m_cSMPSNRVMetric.m_iCodingFaceHeight = m_cWSPSNRMetric.m_iCodingFaceHeight;
 	m_cSMPSNRVMetric.m_iChromaSampleLocType = m_cWSPSNRMetric.m_iChromaSampleLocType;
 	m_cSMPSNRVMetric.m_codingGeoType = m_cWSPSNRMetric.m_codingGeoType;
-
+#endif
 
 #if SVIDEO_SPSNR_NN
   if(getSPSNRMetric()->getSPSNREnabled())
@@ -212,6 +231,7 @@ Void TExt360EncGop::calculatePSNRs(TComPic *pcPic)
 #endif
   getSMPSNRVMetric()->m_min = getWSPSNRMetric()->min;
   getSMPSNRVMetric()->m_max = getWSPSNRMetric()->max;
+
 #if SVIDEO_E2E_METRICS
   getSMPSNRVMetric()->xCalculateSMPSNRV(getOrigPicYuv(), getRecPicYuv());
 #else

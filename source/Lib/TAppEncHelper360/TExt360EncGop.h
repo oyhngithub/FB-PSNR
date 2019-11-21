@@ -72,7 +72,10 @@ public:
 
 public:
   TSMPSNRMetric            m_cSMPSNRMetric;
+  TSMPSNRMetric            m_cE2ESMPSNRMetric;
   TSMPSNRVMetric		   m_cSMPSNRVMetric;
+  TSMPSNRMetric            m_cE2ESMPSNRVMetric;
+
 #if SVIDEO_E2E_METRICS
   TVideoIOYuv *m_pcTVideoIOYuvInputFile;  //note: reference;
   TComPicYuv  *m_pcOrgPicYuv;
@@ -121,7 +124,11 @@ public:
 
 public:
   TSMPSNRMetric* getSMPSNRMetric() { return &m_cSMPSNRMetric; }
+  TSMPSNRMetric* getE2ESMPSNRMetric() { return &m_cE2ESMPSNRMetric; }
+
   TSMPSNRVMetric* getSMPSNRVMetric() { return &m_cSMPSNRVMetric; }
+  TSMPSNRMetric* getE2ESMPSNRVMetric() { return &m_cE2ESMPSNRVMetric; }
+
 #if SVIDEO_E2E_METRICS
   TComPicYuv* getOrigPicYuv() {return m_pcOrgPicYuv;};
   TComPicYuv* getRecPicYuv() {return m_pcRecPicYuv;};

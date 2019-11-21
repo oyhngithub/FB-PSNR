@@ -164,7 +164,7 @@ Void TSMPSNRVMetric::xCalculateSMPSNRV(TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPi
 
 	memset(m_dSMPSNRV, 0, sizeof(Double) * 3);
 	TComPicYuv &picd = *pcPicD;
-	// calculate w1
+
 	for (Int chan = 0; chan < pcPicD->getNumberValidComponents(); chan++)
 	{
 		Double trueWeight = 1;
@@ -205,6 +205,7 @@ Void TSMPSNRVMetric::xCalculateSMPSNRV(TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPi
 
 			Double fWeightResponse = m_pCart3D[np].z;
 
+			// read W1
 			if (fWeightResponse > 0)
 				trueWeight = 0.5 * fWeightResponse;
 
@@ -364,7 +365,7 @@ Void TSMPSNRVMetric::xCalculateSMPSNRV(TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPi
 					fWeight = (fWeight - m_min) / (m_max - m_min);
 					trueWeight += 0.5 * fWeight;
 				}
-					
+				// read w2	
 				fWeightSum += trueWeight;
 				assert(iDiff <= 255);
 				SSDwpsnr += iDiff * iDiff*trueWeight;
@@ -523,3 +524,16 @@ Void TSMPSNRVMetric::xCalculateSMPSNRV(TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPi
 //		m_dSPSNR[ch_indx] = (SSDspsnr[ch_indx] ? 10.0 * log10(fReflpsnr / (Double)SSDspsnr[ch_indx]) : 999.99);
 //	}
 //}
+
+#if SVIDEO_E2E_METRICS
+Void TSMPSNRVMetric::xCalculateE2ESMPSNRV(TComPicYuv* pcPicYuv, TComPicYuv* pcOrigPicYuv)
+#else
+Void TWSPSNRMetric::xCalculateE2EWSPSNR(TComPicYuv* pcPicYuv, Int iPOC)
+#endif
+{
+#if SVIDEO_E2E_METRICS
+	xCalculateSMPSNRV(pcOrigPicYuv, pcPicYuv);
+#else
+	xCalculateWSPSNR(m_pcOrgPicYuv, m_pcRecPicYuv);
+#endif
+}

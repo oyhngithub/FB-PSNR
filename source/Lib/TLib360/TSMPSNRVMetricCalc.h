@@ -80,6 +80,9 @@ public:
 	//Void    createTable(TGeometry *pcCodingGeomtry);
 	Void    xCalculateSMPSNRV(TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPicD);
 
+	Void    setCodingGeoInfo2(SVideoInfo& sRefVideoInfo, SVideoInfo& sRecVideoInfo, InputGeoParam* pInGeoParam);
+	Void    xCalculateE2ESMPSNRV(TComPicYuv* pcRecPicYuv, TComPicYuv* pcOrigPicYuv);
+
 #if !SVIDEO_ROUND_FIX
 	inline Int round(POSType t) { return (Int)(t + (t >= 0 ? 0.5 : -0.5)); };
 #endif
