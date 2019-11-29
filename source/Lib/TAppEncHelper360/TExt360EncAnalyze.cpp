@@ -123,7 +123,7 @@ Void TExt360EncAnalyze::clear()
 Void TExt360EncAnalyze::printHeader()
 {
 	printf(" Y-SMPSNR-Uni  "  "U-SMPSNR-Uni  "  "V-SMPSNR-Uni   ");
-	printf(" Y-SMPSNRV  "  "U-SMPSNRV  "  "V-SMPSNRV   ");
+	printf(" Y-E2EPSNR-Pro  "  "U-E2EPSNR-Pro  "  "V-E2EPSNR-Pro   ");
 #if SVIDEO_E2E_METRICS
 #if SVIDEO_WSPSNR
   if(m_bWSPSNREnabled)

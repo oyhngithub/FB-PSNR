@@ -1,6 +1,6 @@
 /**
  * @file 
- * @brief uniformly-RoI
+ * @brief replaced by PSNR_PRO
  * @author Gl.M
  * Doc:
  */
@@ -16,7 +16,6 @@ TSMPSNRMetric::TSMPSNRMetric()
 	: m_bSMPSNREnabled(false)
 	, m_pCart3D(NULL)
 	, m_fpTable(NULL)
-	, m_ffTable(NULL)
 	, m_response(NULL)
 {
 	m_dSMPSNR[0] = m_dSMPSNR[1] = m_dSMPSNR[2] = 0;
@@ -58,34 +57,7 @@ Void TSMPSNRMetric::setReferenceBitDepth(Int iReferenceBitDepth[MAX_NUM_CHANNEL_
 	}
 }
 
-// get sphere points    TODO
-//Void TSMPSNRMetric::sphSampoints(const std::string &cSphDataFile)
-//{
-//	FILE* fp = fopen(cSphDataFile.c_str(), "r");
-//	int x, y;
-//	x = y = 0;
-//	// read longtitude, latitude
-//	if (fscanf(fp, "%d", &m_iSphNumPoints) != 1)
-//	{
-//		printf("SphData file does not exist.\n");
-//		exit(EXIT_FAILURE);
-//		fclose(fp);
-//	}
-//
-//	m_pCart3D = (CPos3D*)malloc(sizeof(CPos3D)*(m_iSphNumPoints));
-//	memset(m_pCart3D, 0, (sizeof(CPos3D) * m_iSphNumPoints));
-//	for (Int z = 0; z < m_iSphNumPoints; z++)
-//	{
-//		// Reading from latitude,longtitude
-//		if (fscanf(fp, "%lf %lf %lf", &m_pCart3D[z].y, &m_pCart3D[z].x, &m_pCart3D[z].z) != 3)
-//		{
-//			printf("Format error SphData in sphSampoints().\n");
-//			exit(EXIT_FAILURE);
-//		}
-//	}
-//	fclose(fp);
-//}
-
+// read feature
 Void TSMPSNRMetric::sphSampoints(const std::string &cSphDataFile, const std::string &responseFile)
 {
 	FILE* fp = fopen(cSphDataFile.c_str(), "r");
@@ -99,8 +71,8 @@ Void TSMPSNRMetric::sphSampoints(const std::string &cSphDataFile, const std::str
 	free(m_pCart3D);
 	m_pCart3D = (CPos3D*)malloc(sizeof(CPos3D)*(m_iSphNumPoints));
 	memset(m_pCart3D, 0, (sizeof(CPos3D) * m_iSphNumPoints));
-	double min = 1000000;
-	double max = 0;
+	//double min = 1000000;
+	//double max = 0;
 	for (Int z = 0; z < m_iSphNumPoints; z++)
 	{
 		// Reading from latitude,longtitude
@@ -109,40 +81,13 @@ Void TSMPSNRMetric::sphSampoints(const std::string &cSphDataFile, const std::str
 			printf("Format error SphData in sphSampoints().\n");
 			exit(EXIT_FAILURE);
 		}
-		min = min < m_pCart3D[z].z ? min : m_pCart3D[z].z;
-		max = max > m_pCart3D[z].z ? max : m_pCart3D[z].z;
-	}
-	double scaling = max - min;
-	for (Int z = 0; z < m_iSphNumPoints; z++)
-	{
-		m_pCart3D[z].z = (m_pCart3D[z].z - min) / scaling;
+		//assert((m_pCart3D[z].z >= 0) && (m_pCart3D[z].z <= 1) && (m_pCart3D[z].x >= -180) && (m_pCart3D[z].x <= 180) && (m_pCart3D[z].y >= -90) && (m_pCart3D[z].y <= 90));
 	}
 	fclose(fp);
 
-	//fp = fopen(responseFile.c_str(), "r");
-	//// read longtitude, latitude
-	//if (fscanf(fp, "%d", &m_iFeaturePoints) != 1)
-	//{
-	//	printf("FeatureData file does not exist.\n");
-	//	exit(EXIT_FAILURE);
-	//	fclose(fp);
-	//}
-
-	//m_response = (CPos3D*)malloc(sizeof(CPos3D)*(m_iFeaturePoints));
-	//memset(m_response, 0, (sizeof(CPos3D) * m_iFeaturePoints));
-	//for (Int z = 0; z < m_iFeaturePoints; z++)
-	//{
-	//	// Reading from latitude,longtitude
-	//	if (fscanf(fp, "%lf %lf %lf", &m_response[z].y, &m_response[z].x, &m_response[z].z) != 3)
-	//	{
-	//		printf("Format error SphData in sphSampoints().\n");
-	//		exit(EXIT_FAILURE);
-	//	}
-	//}
-	//fclose(fp);
-
 }
 
+// convert longtitude, latitude to x, y, z in the sphere
 void TSMPSNRMetric::sphToCart(CPos2D* sph, CPos3D* out)
 {
 	POSType fLat = (POSType)(sph->x*S_PI / 180.0);
@@ -153,7 +98,7 @@ void TSMPSNRMetric::sphToCart(CPos2D* sph, CPos3D* out)
 	out->z = -scos(fLon) * scos(fLat);
 }
 
-// create saliencymap table   TODO
+// create saliencymap table  
 void TSMPSNRMetric::createTable(TGeometry *pcCodingGeomtry)
 {
 	Int iNumPoints = m_iSphNumPoints;
@@ -162,10 +107,7 @@ void TSMPSNRMetric::createTable(TGeometry *pcCodingGeomtry)
 	SPos posIn, posOut;
 	if (m_fpTable != nullptr)
 		free(m_fpTable);
-	if (m_ffTable != nullptr)
-		free(m_ffTable);
 	m_fpTable = (IPos2D*)malloc(iNumPoints * sizeof(IPos2D));
-	m_ffTable = (IPos2D*)malloc(m_iFeaturePoints * sizeof(IPos2D));
 
 	for (Int np = 0; np < iNumPoints; np++)
 	{
@@ -187,48 +129,6 @@ void TSMPSNRMetric::createTable(TGeometry *pcCodingGeomtry)
 		pcCodingGeomtry->clamp(&tmpPos);
 		pcCodingGeomtry->geoToFramePack(&tmpPos, &m_fpTable[np]);
 	}
-	// NOT USED!
-	for (Int np = 0; np < m_iFeaturePoints; np++)
-	{
-		In2d.x = m_response[np].x;
-		In2d.y = m_response[np].y;
-
-		//get cartesian coordinates
-		sphToCart(&In2d, &Out3d);
-		posIn.x = Out3d.x; posIn.y = Out3d.y; posIn.z = Out3d.z;
-		assert(posIn.x < 1 && posIn.x > -1 && posIn.y > -1 && posIn.y < 1 && posIn.z < 1 && posIn.z > -1);
-		pcCodingGeomtry->map3DTo2D(&posIn, &posOut);
-
-		posOut.x = (POSType)TGeometry::round(posOut.x);
-		posOut.y = (POSType)TGeometry::round(posOut.y);
-		IPos tmpPos;
-		tmpPos.faceIdx = posOut.faceIdx;
-		tmpPos.u = (Int)(posOut.x);
-		tmpPos.v = (Int)(posOut.y);
-		pcCodingGeomtry->clamp(&tmpPos);
-		pcCodingGeomtry->geoToFramePack(&tmpPos, &m_ffTable[np]);
-	}
-
-	// ====================================================================================================================
-	// DIY
-	//std::ofstream outfile("CountData.txt", std::ios::out | std::ios::binary);
-	//if (!outfile.is_open())
-	//{
-	   // std::cout << " the file open fail" << std::endl;
-	   // exit(1);
-	//}
-	//point2DCount countVector = pcCodingGeomtry->getPoint2DCount();
-	//for (int i = 0; i < countVector.size(); ++i)
-	//{
-	   // for (int j = 0; j < countVector[i].size(); ++j)
-	   // {
-		  //  outfile << countVector[i][j] << " ";
-	   // }
-	   // outfile << "\r\n";
-	//}
-	//outfile.close();
-
-	// ====================================================================================================================
 }
 
 // pass the pics before and after the encode

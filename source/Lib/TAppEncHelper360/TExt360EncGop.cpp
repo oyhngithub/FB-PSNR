@@ -93,7 +93,6 @@ Void TExt360EncGop::calculatePSNRs(TComPic *pcPic)
 	m_cSMPSNRVMetric.m_pCart3D = m_cSMPSNRMetric.m_pCart3D;
 	m_cSMPSNRVMetric.m_response = m_cSMPSNRMetric.m_response;
 	m_cSMPSNRVMetric.m_fpTable = m_cSMPSNRMetric.m_fpTable;
-	m_cSMPSNRVMetric.m_ffTable = m_cSMPSNRMetric.m_ffTable;
 	m_cSMPSNRVMetric.m_iFeaturePoints = m_cSMPSNRMetric.m_iFeaturePoints;
 	m_cSMPSNRVMetric.m_iSphNumPoints = m_cSMPSNRMetric.m_iSphNumPoints;
 
@@ -208,7 +207,7 @@ Void TExt360EncGop::calculatePSNRs(TComPic *pcPic)
 #if SVIDEO_DYNAMIC_VIEWPORT_PSNR
   if(getDynamicViewPortPSNRMetric()->isEnabled())
   {
-    getDynamicViewPortPSNRMetric()->xCalculateDynamicViewPSNR(pcPic, getOrigPicYuv());
+	  getDynamicViewPortPSNRMetric()->xCalculateDynamicViewPSNR(pcPic, getOrigPicYuv());
   }
 #endif
 #if SVIDEO_CF_SPSNR_NN
@@ -229,8 +228,6 @@ Void TExt360EncGop::calculatePSNRs(TComPic *pcPic)
     getCFCPPPSNRMetric()->xCalculateCPPPSNR(getOrigPicYuv(), pcPic->getPicYuvRec());
   }
 #endif
-  getSMPSNRVMetric()->m_min = getWSPSNRMetric()->min;
-  getSMPSNRVMetric()->m_max = getWSPSNRMetric()->max;
 
 #if SVIDEO_E2E_METRICS
   getSMPSNRVMetric()->xCalculateSMPSNRV(getOrigPicYuv(), getRecPicYuv());
@@ -333,7 +330,7 @@ Void TExt360EncGop::printPerPOCInfo()
 	}
 	if (getSMPSNRVMetric()->getSMPSNRVEnabled())
 	{
-		printf(" [Y-SMPSNR-V %6.4lf dB   U-SMPSNR-V %6.4lf dB   V-SMPSNR-V %6.4lf dB]", getSMPSNRVMetric()->getSMPSNRV()[COMPONENT_Y], getSMPSNRVMetric()->getSMPSNRV()[COMPONENT_Cb], getSMPSNRVMetric()->getSMPSNRV()[COMPONENT_Cr]);
+		printf(" [Y-E2EPSNR-Pro %6.4lf dB   U-E2EPSNR-Pro %6.4lf dB   V-E2EPSNR-Pro %6.4lf dB]", getSMPSNRVMetric()->getSMPSNRV()[COMPONENT_Y], getSMPSNRVMetric()->getSMPSNRV()[COMPONENT_Cb], getSMPSNRVMetric()->getSMPSNRV()[COMPONENT_Cr]);
 	}
 #if SVIDEO_E2E_METRICS
 #if SVIDEO_WSPSNR && SVIDEO_WSPSNR_REPORT_PER_FRAME

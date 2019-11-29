@@ -12,7 +12,6 @@ public:
 	// m_pCart3D stores radius weights
 	CPos3D*   m_pCart3D;
 	IPos2D*   m_fpTable;
-	IPos2D*   m_ffTable;
 	Int       m_iSphNumPoints;
 	Int       m_iFeaturePoints;
 

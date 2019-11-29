@@ -1,24 +1,22 @@
 #pragma once
 #include "TLib360/TGeometry.h"
-
-class TSMPSNRVMetric
+class TPSNRProMetricCalc
 {
 public:
-	Bool      m_bSMPSNRVEnabled;
-	Double    m_dSMPSNRV[3];
+	Bool      m_bPSNRProEnabled;
+	Double    m_dPSNRPro[3];
 
-	// m_response stores response wseight
-	CPos3D*   m_response;
-	// m_pCart3D stores radius weights
-	CPos3D*   m_pCart3D;
-	IPos2D*   m_fpTable;
-	Int       m_iSphNumPoints;
-	Int       m_iFeaturePoints;
+	// longtitude, latitude, weight
+	CPos3D* m_frameInfo3D;
+	// u, v
+	IPos2D* m_frameInfo2D;
+
+	Int       m_FeaturePoints;
 
 	Int       m_outputBitDepth[MAX_NUM_CHANNEL_TYPE];         ///< bit-depth of output file
 	Int       m_referenceBitDepth[MAX_NUM_CHANNEL_TYPE];      ///< bit-depth of reference file
 
-	// WS-PSNR member
+	// Weight-to-Spherical
 	Double* m_fErpWeight_Y;
 	Double* m_fErpWeight_C;
 	Double* m_fCubeWeight_Y;
@@ -48,11 +46,11 @@ public:
 #if SVIDEO_WSPSNR_E2E
 	//for E2E WS-PSNR calculation;
 #if !SVIDEO_E2E_METRICS
-	TVideoIOYuv *m_pcTVideoIOYuvInputFile;  //note: reference;
-	TGeometry   *m_pRefGeometry;
-	TGeometry   *m_pRecGeometry;
-	TComPicYuv  *m_pcOrgPicYuv;
-	TComPicYuv  *m_pcRecPicYuv;             //in original geometry domain;
+	TVideoIOYuv* m_pcTVideoIOYuvInputFile;  //note: reference;
+	TGeometry* m_pRefGeometry;
+	TGeometry* m_pRecGeometry;
+	TComPicYuv* m_pcOrgPicYuv;
+	TComPicYuv* m_pcRecPicYuv;             //in original geometry domain;
 #endif
 #if !SVIDEO_E2E_METRICS
 	Int         m_iLastFrmPOC;
@@ -65,20 +63,20 @@ public:
 
 
 public:
-	TSMPSNRVMetric();
-	~TSMPSNRVMetric();
-	Bool    getSMPSNRVEnabled() { return m_bSMPSNRVEnabled; }
-	Void    setSMPSNRVEnabledFlag(Bool bEnabledFlag) { m_bSMPSNRVEnabled = bEnabledFlag; }
+	TPSNRProMetricCalc();
+	~TPSNRProMetricCalc();
+	Bool    getPSNRProEnabled() { return m_bPSNRProEnabled; }
+	Void    setPSNRProEnabledFlag(Bool bEnabledFlag) { m_bPSNRProEnabled = bEnabledFlag; }
 	Void    setOutputBitDepth(Int iOutputBitDepth[MAX_NUM_CHANNEL_TYPE]);
 	Void    setReferenceBitDepth(Int iReferenceBitDepth[MAX_NUM_CHANNEL_TYPE]);
-	Double* getSMPSNRV() { return m_dSMPSNRV; }
+	Double* getPSNRPro() { return m_dPSNRPro; }
 	//Void    sphSampoints(const std::string &cSphDataFile);
 	//Void    sphToCart(CPos2D*, CPos3D*);
 	//Void    createTable(TGeometry *pcCodingGeomtry);
-	Void    xCalculateSMPSNRV(TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPicD);
+	Void    xCalculatePSNRPro(TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPicD);
 
 	Void    setCodingGeoInfo2(SVideoInfo& sRefVideoInfo, SVideoInfo& sRecVideoInfo, InputGeoParam* pInGeoParam);
-	Void    xCalculateE2ESMPSNRV(TComPicYuv* pcRecPicYuv, TComPicYuv* pcOrigPicYuv);
+	Void    xCalculateE2EPSNRPro(TComPicYuv* pcRecPicYuv, TComPicYuv* pcOrigPicYuv);
 
 #if !SVIDEO_ROUND_FIX
 	inline Int round(POSType t) { return (Int)(t + (t >= 0 ? 0.5 : -0.5)); };

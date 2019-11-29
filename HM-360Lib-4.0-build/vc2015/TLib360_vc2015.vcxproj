@@ -186,6 +186,7 @@
     <ClCompile Include="..\..\source\Lib\TLib360\TViewPort.cpp" />
     <ClCompile Include="..\..\source\Lib\TLib360\TViewPortPSNR.cpp" />
     <ClCompile Include="..\..\source\Lib\TLib360\TWSPSNRMetricCalc.cpp" />
+    <ClCompile Include="TPSNRProMetricCalc.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\Lib\TLib360\TAdjustedCubeMap.h" />
@@ -212,6 +213,7 @@
     <ClInclude Include="..\..\source\Lib\TLib360\TViewPort.h" />
     <ClInclude Include="..\..\source\Lib\TLib360\TViewPortPSNR.h" />
     <ClInclude Include="..\..\source\Lib\TLib360\TWSPSNRMetricCalc.h" />
+    <ClInclude Include="TPSNRProMetricCalc.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
