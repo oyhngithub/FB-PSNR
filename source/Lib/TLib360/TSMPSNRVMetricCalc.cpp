@@ -204,10 +204,10 @@ Void TSMPSNRVMetric::xCalculateSMPSNRV(TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPi
 			y = y_loc;
 
 			Double fWeightResponse = m_pCart3D[np].z;
-
+			assert(fWeightResponse >= 0 && fWeightResponse <= 1);
 			// read W1
 			if (fWeightResponse > 0)
-				trueWeight = 0.5 * fWeightResponse;
+				trueWeight = fWeightResponse;
 
 				if (m_codingGeoType == SVIDEO_EQUIRECT || m_codingGeoType == SVIDEO_NEWUNIFORMMAP)
 				{
@@ -363,7 +363,8 @@ Void TSMPSNRVMetric::xCalculateSMPSNRV(TComPicYuv* pcOrgPicYuv, TComPicYuv* pcPi
 #endif	
 				if (fWeight > 0) {
 					fWeight = (fWeight - m_min) / (m_max - m_min);
-					trueWeight += 0.5 * fWeight;
+					assert(fWeight >= 0 && fWeight <= 1);
+					trueWeight *= fWeight;
 				}
 				// read w2	
 				fWeightSum += trueWeight;

@@ -78,7 +78,7 @@ TExt360EncGop::~TExt360EncGop()
 
 Void TExt360EncGop::calculatePSNRs(TComPic *pcPic)
 {
-
+	//move forward
 #if SVIDEO_E2E_METRICS
 	readOrigPicYuv(pcPic->getPOC());
 	reconstructPicYuv(pcPic->getPicYuvRec());
@@ -89,6 +89,7 @@ Void TExt360EncGop::calculatePSNRs(TComPic *pcPic)
 #else
 	getSMPSNRMetric()->xCalculateSMPSNR(pcPic->getPicYuvOrg(), pcPic->getPicYuvRec());
 #endif
+
 	//init SMPSNRV with SMPSNR
 	m_cSMPSNRVMetric.m_pCart3D = m_cSMPSNRMetric.m_pCart3D;
 	m_cSMPSNRVMetric.m_response = m_cSMPSNRMetric.m_response;
