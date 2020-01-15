@@ -73,7 +73,7 @@ class TEncTop;
 
 class TEncGOP
 {
-  class DUData
+class DUData
   {
   public:
     DUData()
@@ -93,12 +93,6 @@ private:
 
   TEncAnalyze             m_gcAnalyzeAll_in;
 
-#if EXTENSION_360_VIDEO
-  TExt360EncGop           m_ext360;
-public:
-  TExt360EncGop &getExt360Data() { return m_ext360; }
-private:
-#endif
 
   //  Data
   Bool                    m_bLongtermTestPictureHasBeenCoded;
@@ -147,6 +141,10 @@ private:
   Int                     m_DBParam[MAX_ENCODER_DEBLOCKING_QUALITY_LAYERS][4];   //[layer_id][0: available; 1: bDBDisabled; 2: Beta Offset Div2; 3: Tc Offset Div2;]
 
 public:
+#if EXTENSION_360_VIDEO
+	TExt360EncGop           m_ext360;
+	TExt360EncGop& getExt360Data() { return m_ext360; }
+#endif
   TEncGOP();
   virtual ~TEncGOP();
 

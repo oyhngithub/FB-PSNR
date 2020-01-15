@@ -31,10 +31,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "TAppEncHelper360/TExt360EncGop.h"
 #include "TLibCommon/TComPic.h"
+#include <../App/TAppEncoder/GlobalTApp.h>
+
 #include "TLibEncoder/TEncAnalyze.h"
-#include "TLibEncoder/TEncGOP.h"
+#include "../Lib/TLibEncoder/TEncTop.h"
+#include "TAppEncHelper360/TExt360AppEncCfg.h"
+#include "TAppEncHelper360/TExt360AppEncTop.h"
 
 TExt360EncGop::TExt360EncGop()
 {
@@ -84,12 +87,6 @@ Void TExt360EncGop::calculatePSNRs(TComPic *pcPic)
 	reconstructPicYuv(pcPic->getPicYuvRec());
 #endif
 
-#if SVIDEO_E2E_METRICS
-	getSMPSNRMetric()->xCalculateSMPSNR(getOrigPicYuv(), getRecPicYuv());
-#else
-	getSMPSNRMetric()->xCalculateSMPSNR(pcPic->getPicYuvOrg(), pcPic->getPicYuvRec());
-#endif
-
 	//init SMPSNRV with SMPSNR
 	m_cSMPSNRVMetric.m_pCart3D = m_cSMPSNRMetric.m_pCart3D;
 	m_cSMPSNRVMetric.m_response = m_cSMPSNRMetric.m_response;
@@ -100,6 +97,24 @@ Void TExt360EncGop::calculatePSNRs(TComPic *pcPic)
 
 
 	
+	//for Codec initialization
+	m_cSMPSNRMetric.m_fErpWeight_Y = m_cWSPSNRMetric.m_fErpWeight_Y;
+	m_cSMPSNRMetric.m_fErpWeight_C = m_cWSPSNRMetric.m_fErpWeight_C;
+	m_cSMPSNRMetric.m_fCubeWeight_Y = m_cWSPSNRMetric.m_fCubeWeight_Y;
+	m_cSMPSNRMetric.m_fCubeWeight_C = m_cWSPSNRMetric.m_fCubeWeight_C;
+	m_cSMPSNRMetric.m_fEapWeight_Y = m_cWSPSNRMetric.m_fEapWeight_Y;
+	m_cSMPSNRMetric.m_fEapWeight_C = m_cWSPSNRMetric.m_fEapWeight_C;
+	m_cSMPSNRMetric.m_fOctaWeight_Y = m_cWSPSNRMetric.m_fOctaWeight_Y;
+	m_cSMPSNRMetric.m_fOctaWeight_C = m_cWSPSNRMetric.m_fOctaWeight_C;
+	m_cSMPSNRMetric.m_fIcoWeight_Y = m_cWSPSNRMetric.m_fIcoWeight_Y;
+	m_cSMPSNRMetric.m_fIcoWeight_C = m_cWSPSNRMetric.m_fIcoWeight_C;
+
+	m_cSMPSNRMetric.m_iCodingFaceWidth = m_cWSPSNRMetric.m_iCodingFaceWidth;
+	m_cSMPSNRMetric.m_iCodingFaceHeight = m_cWSPSNRMetric.m_iCodingFaceHeight;
+	m_cSMPSNRMetric.m_iChromaSampleLocType = m_cWSPSNRMetric.m_iChromaSampleLocType;
+	m_cSMPSNRMetric.m_codingGeoType = m_cWSPSNRMetric.m_codingGeoType;
+
+
 #if SVIDEO_E2E_METRICS
 	// for E2E RV-PSNR e.g. ROI-Variable-PSNR
 	m_cSMPSNRVMetric.m_fErpWeight_Y = m_cE2EWSPSNRMetric.m_fErpWeight_Y;
@@ -233,11 +248,20 @@ Void TExt360EncGop::calculatePSNRs(TComPic *pcPic)
   getSMPSNRVMetric()->m_min = getWSPSNRMetric()->min;
   getSMPSNRVMetric()->m_max = getWSPSNRMetric()->max;
 
+  getSMPSNRMetric()->m_min = getWSPSNRMetric()->min;
+  getSMPSNRMetric()->m_max = getWSPSNRMetric()->max;
+
 #if SVIDEO_E2E_METRICS
   getSMPSNRVMetric()->xCalculateSMPSNRV(getOrigPicYuv(), getRecPicYuv());
 #else
   getSMPSNRVMetric()->xCalculateSMPSNRV(pcPic->getPicYuvOrg(), pcPic->getPicYuvRec());
 #endif
+  // re-create table
+  (GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRMetric.createTable(\
+	  (GlobalTApp::getTApp())->ext360->m_pcCodingGeomtry);
+  // always calculate Codec
+  getSMPSNRMetric()->xCalculateSMPSNR(pcPic->getPicYuvOrg(), pcPic->getPicYuvRec());
+
 }
 
 

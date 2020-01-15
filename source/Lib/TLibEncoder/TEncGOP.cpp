@@ -34,12 +34,13 @@
 /** \file     TEncGOP.cpp
     \brief    GOP encoder class
 */
+//Added
+#include "TAppEncHelper360/TExt360AppEncCfg.h"
+#include <../App/TAppEncoder/GlobalTApp.h>
 
 #include <list>
 #include <algorithm>
 #include <functional>
-#include "TAppEncHelper360/TExt360AppEncCfg.h"
-#include <../App/TAppEncoder/GlobalTApp.h>
 
 #include "TEncTop.h"
 #include "TEncGOP.h"
@@ -1858,7 +1859,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
 	std::string responseFileName = TExt360AppEncCfg::m_featureFileName + "_response_" + std::to_string(pcPic->getSlice(0)->getPOC()) + ".txt";
 	// read feature
 	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRMetric.sphSampoints(fileName, responseFileName);
-	// create table
+	// create table for E2E
 #if SVIDEO_E2E_METRICS
 	(GlobalTApp::getTApp())->getTEncTop().m_cGOPEncoder.m_ext360.m_cSMPSNRMetric.createTable((GlobalTApp::getTApp())->ext360->m_pcInputGeomtry);
 #else
